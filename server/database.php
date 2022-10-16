@@ -1,4 +1,7 @@
 <?php
+$users = array(1 => new User('alexsin', 1, true));
+$hws = array(1 => new Homework(1, [], new DateTime()));
+
 function get_user(int $user_id): User|false {
     return get_all_users()[$user_id];
 }
@@ -8,18 +11,29 @@ function get_hw(int $number): Homework|false {
 }
 
 function get_all_users(): array {
-    return array(1 => new User('alexsin', 1, true));
+    global $users;
+    return $users;
 }
 
 function get_all_hws(): array {
-    return array(1 => new Homework(1, [], new DateTime()));
+    global  $hws;
+    return $hws;
 }
 
 function save_user(User $user): bool {
-    return true;
+    global $users;
+
+//    if (key_exists($user->id, $users)) {
+//        return false;
+//    } else {
+        $users[$user->id] = $user;
+        return true;
+//    }
 }
 
 function save_hw(Homework $hw): bool {
+    global  $hws;
+    $hws[$hw->number] = $hw;
     return true;
 }
 ?>
