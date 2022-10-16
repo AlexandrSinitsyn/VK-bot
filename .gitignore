@@ -1,2 +1,5 @@
 # INTELLIJ IDEA SETTINGS
 .idea
+
+# private
+private-keys.properties

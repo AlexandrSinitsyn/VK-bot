@@ -4,7 +4,7 @@
 	$app_id = 51450467;
 	
 	$standalone = "???"; // access token
-	$group_token = 'e7a8b2c5a5edfe5c72e802d28035968c74552afbc11d38e1743c6fe3ec18550259d580befbb50fa220067';
+	$group_token = '???'; // group token
 	$conf = [
 		'standalone' => $standalone,
 		'group_token' => $group_token,
