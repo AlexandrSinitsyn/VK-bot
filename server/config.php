@@ -1,5 +1,5 @@
 <?php
-	$user_id = "???";
+	$user_id = '???';
 	
 	$app_id = 51450467;
 	
@@ -17,4 +17,28 @@
 		'random_id' => mt_rand(0000000000, 999999999999),
 		'v' => '5.131'
 	];
+
+    class User {
+        public string $name;
+        public int $id;
+        public bool $student;
+
+        public function __construct(string $name, int $id, bool $student = true) {
+            $this->name = $name;
+            $this->id = $id;
+            $this->student = $student;
+        }
+    }
+
+    class Homework {
+        public int $number;
+        public array $results;
+        public DateTime $deadline;
+
+        public function __construct(int $number, array $results, DateTime $deadline) {
+            $this->number = $number;
+            $this->results = $results;
+            $this->deadline = $deadline;
+        }
+    }
 ?>
