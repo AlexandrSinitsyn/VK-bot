@@ -3,3 +3,13 @@
 
 # private
 private-keys.properties
+
+# deprecated
+deprecated
+
+# out
+composer.lock
+vendor
+
+# local scripts
+scripts
