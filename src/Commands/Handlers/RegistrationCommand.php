@@ -21,7 +21,7 @@ class RegistrationCommand extends AbstractCommand
     protected function response(User $user, array $args): ?string
     {
         if (DEBUG) {
-            return false;
+            return null;
         } else {
             return 'You can not re-register';
         }

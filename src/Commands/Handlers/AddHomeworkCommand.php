@@ -24,15 +24,13 @@ class AddHomeworkCommand extends AbstractCommand
     protected function response(User $user, array $args): ?string
     {
         if ($user->student) {
-            return false;
+            return null;
         }
 
         preg_match('/^\s*(\d+):\s*([0-9]{2}-[0-9]{2}-[0-9]{4})\s*$/', join(' ', $args), $matches);
 
         try {
-            error_log("number: " . $matches[0] . PHP_EOL);
-            error_log("date: " . $matches[1] . PHP_EOL);
-            $result = $this->homeworkService->save_homework($matches[0], array(), new DateTime($matches[1]));
+            $result = $this->homeworkService->save_homework($matches[1], array(), new DateTime($matches[2]));
 
             return $result ? "Ok" : "Sorry, smth failed";
         } catch (Exception $e) {
