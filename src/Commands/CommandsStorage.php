@@ -2,21 +2,33 @@
 
 namespace Bot\Commands;
 
+use Bot\Commands\Handlers\AddHomeworkCommand;
+use Bot\Commands\Handlers\GetHomeworkCommand;
+use Bot\Commands\Handlers\HelloCommand;
+use Bot\Commands\Handlers\HelpCommand;
+use Bot\Commands\Handlers\RegistrationCommand;
 use Exception;
+use VK\Client\VKApiClient;
 
 class CommandsStorage
 {
     private array $commands;
 
-    public function __construct(Command ...$commands)
+    public function __construct(VKApiClient $vkApi)
     {
         $this->commands = array();
-        $this->addCommands(...$commands);
+        $this->addCommands(
+            new AddHomeworkCommand($vkApi, $this),
+            new GetHomeworkCommand($vkApi, $this),
+            new HelloCommand($vkApi, $this),
+            new HelpCommand($vkApi, $this),
+            new RegistrationCommand($vkApi, $this),
+        );
     }
 
     public function addCommand(Command $command): void
     {
-        $this->commands[$command->getName()] = $command;
+        $this->commands[trim(strtolower($command->getName()))] = $command;
     }
 
     public function addCommands(Command ...$commands): void
@@ -33,7 +45,7 @@ class CommandsStorage
     public function getCommand(string $name): ?Command
     {
         try {
-            return $this->commands[$name];
+            return $this->commands[trim(strtolower($name))];
         } catch (Exception $e) {
             return null;
         }

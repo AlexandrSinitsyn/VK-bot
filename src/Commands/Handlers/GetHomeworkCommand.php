@@ -25,15 +25,15 @@ class GetHomeworkCommand extends AbstractCommand
             return null;
         }
 
-        preg_match('/^\s*(\d+)\s*$/', join(' ', $args), $matches);
+        preg_match('/^(\d+)$/', trim(join(' ', $args)), $matches);
 
         $result = $this->homeworkService->get_homework_by_id($matches[1]);
 
-        return $result ? "Ok" : "Sorry, smth failed";
+        return $result ?? "Homework not found";
     }
 
     protected function register(array $user, array $args): string
     {
-        return "You can not add homeworks til you are not a teacher";
+        return "You can not get homeworks til you are not registered";
     }
 }

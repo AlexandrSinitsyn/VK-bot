@@ -12,4 +12,9 @@ class User {
         $this->id = $id;
         $this->student = $student;
     }
+
+    public function __toString(): string
+    {
+        return "#" . $this->id . "\t" . $this->name . "[" . ($this->student ? "student" : "teacher") . "]" . PHP_EOL;
+    }
 }

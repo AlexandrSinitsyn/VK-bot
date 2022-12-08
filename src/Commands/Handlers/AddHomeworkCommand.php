@@ -27,7 +27,7 @@ class AddHomeworkCommand extends AbstractCommand
             return null;
         }
 
-        preg_match('/^\s*(\d+):\s*([0-9]{2}-[0-9]{2}-[0-9]{4})\s*$/', join(' ', $args), $matches);
+        preg_match('/^(\d+):\s*([0-9]{2}-[0-9]{2}-[0-9]{4})$/', trim(join(' ', $args)), $matches);
 
         try {
             $result = $this->homeworkService->save_homework($matches[1], array(), new DateTime($matches[2]));

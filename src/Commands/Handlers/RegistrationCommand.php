@@ -29,7 +29,7 @@ class RegistrationCommand extends AbstractCommand
 
     protected function register(array $user, array $args): string
     {
-        $is_student = preg_match('/^\s*([Ss]tudent[.!]?)?\s*$/', $args[0] ?? '') === 1;
+        $is_student = preg_match('/^([Ss]tudent[.!]?)?$/', strtolower($args[0] ?? '')) === 1;
 
         $result = $this->userService->save_user($user['first_name'], $user['id'], $is_student);
 

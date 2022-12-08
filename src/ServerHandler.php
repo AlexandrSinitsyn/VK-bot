@@ -5,6 +5,7 @@ namespace Bot;
 use Bot\Commands\Command;
 use Bot\Commands\CommandsStorage;
 use Bot\Commands\Handlers\AddHomeworkCommand;
+use Bot\Commands\Handlers\GetHomeworkCommand;
 use Bot\Commands\Handlers\HelloCommand;
 use Bot\Commands\Handlers\RegistrationCommand;
 use Bot\Database\DatabaseHandler;
@@ -14,17 +15,13 @@ use VK\Client\VKApiClient;
 class ServerHandler extends VKCallbackApiServerHandler
 {
     private VKApiClient $vkApi;
-    private CommandsStorage $storage;
+    public CommandsStorage $storage;
     private DatabaseHandler $databaseHandler;
 
     public function __construct()
     {
         $this->vkApi = new VKApiClient("5.130");
-        $this->storage = new CommandsStorage(
-            new HelloCommand($this->vkApi),
-            new RegistrationCommand($this->vkApi),
-            new AddHomeworkCommand($this->vkApi),
-        );
+        $this->storage = new CommandsStorage($this->vkApi);
         $this->databaseHandler = new DatabaseHandler();
     }
 

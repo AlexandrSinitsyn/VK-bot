@@ -67,7 +67,7 @@ class DatabaseHandler
 
             $id = (int) $row_data[0];
             $deadline = new DateTime($row_data[1]);
-            $results = preg_split(',', $row_data[2]);
+            $results = explode(',', $row_data[2]);
 
             $hws[$id] = new Homework($id, $results, $deadline);
         }

@@ -15,4 +15,9 @@ class Homework
         $this->results = $results;
         $this->deadline = $deadline;
     }
+
+    public function __toString(): string
+    {
+        return "#" . $this->number . "\t" . $this->deadline->format("d/m/y") . PHP_EOL;
+    }
 }
