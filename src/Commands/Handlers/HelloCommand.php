@@ -13,9 +13,9 @@ class HelloCommand extends AbstractCommand
 
     public function getDescription(): string
     {
-        return "Prints hello message to the chat";
+        return 'Prints hello message to the chat.' . PHP_EOL . 'Usage: `Hello`';
     }
-    protected function response(User $user, array $args): string
+    protected function response(User $user, array $args): ?string
     {
         return sprintf("Hello, %s!", $user->name);
     }

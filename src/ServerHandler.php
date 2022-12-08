@@ -4,6 +4,7 @@ namespace Bot;
 
 use Bot\Commands\Command;
 use Bot\Commands\CommandsStorage;
+use Bot\Commands\Handlers\AddHomeworkCommand;
 use Bot\Commands\Handlers\HelloCommand;
 use Bot\Commands\Handlers\RegistrationCommand;
 use Bot\Database\DatabaseHandler;
@@ -22,6 +23,7 @@ class ServerHandler extends VKCallbackApiServerHandler
         $this->storage = new CommandsStorage(
             new HelloCommand($this->vkApi),
             new RegistrationCommand($this->vkApi),
+            new AddHomeworkCommand($this->vkApi),
         );
         $this->databaseHandler = new DatabaseHandler();
     }

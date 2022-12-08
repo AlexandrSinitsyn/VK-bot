@@ -17,8 +17,8 @@ class UserService
         return DatabaseHandler::get_user($id);
     }
 
-    function save_user(User $user): bool
+    function save_user(string $name, int $id, bool $isStudent): bool
     {
-        return DatabaseHandler::save_user($user);
+        return DatabaseHandler::save_user(new User($name, $id, $isStudent));
     }
 }
