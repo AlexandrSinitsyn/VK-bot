@@ -82,7 +82,7 @@ class DatabaseHandler
 //        if (key_exists($user->id, $users)) {
 //            return false;
 //        } else {
-            return file_put_contents(USERS_FILE, $user->id . " " . $user->name . " " . ($user->student ? '1' : '0') . PHP_EOL, FILE_APPEND | LOCK_EX);
+            return file_put_contents(USERS_FILE, $user->id . ' ' . $user->name . ' ' . ($user->student ? '1' : '0') . PHP_EOL, FILE_APPEND | LOCK_EX);
 //        }
     }
 
@@ -93,7 +93,7 @@ class DatabaseHandler
 //        if (key_exists($hw->number, $hws)) {
 //            return false;
 //        } else {
-            return file_put_contents(HOMEWORKS_FILE, $hw->number . " " . $hw->deadline->format('d/m/y') . " " . join(',', $hw->results) . PHP_EOL, FILE_APPEND | LOCK_EX);
+            return file_put_contents(HOMEWORKS_FILE, $hw->number . ' ' . $hw->deadline->format('d/m/y') . ' ' . join(',', $hw->results) . PHP_EOL, FILE_APPEND | LOCK_EX);
 //        }
     }
 }

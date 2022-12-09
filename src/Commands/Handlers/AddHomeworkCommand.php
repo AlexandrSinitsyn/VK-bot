@@ -31,10 +31,14 @@ class AddHomeworkCommand extends AbstractCommand
 
         preg_match('/^(\d+):\s*([0-9]{2}-[0-9]{2}-[0-9]{4})$/', trim(join(' ', $args)), $matches);
 
+        if (count($matches) < 3) {
+            return "Invalid command use. Look in `help`";
+        }
+
         try {
             $result = $this->homeworkService->save_homework($matches[1], array(), new DateTime($matches[2]));
 
-            return $result ? "Ok" : "Sorry, smth failed";
+            return $result ? 'Ok' : 'Sorry, smth failed';
         } catch (Exception $e) {
             return "Failed: $e";
         }
@@ -42,6 +46,6 @@ class AddHomeworkCommand extends AbstractCommand
 
     protected function register(array $user, array $args): string
     {
-        return "You can not add homeworks til you are not a teacher";
+        return 'You can not add homeworks til you are not a teacher';
     }
 }
