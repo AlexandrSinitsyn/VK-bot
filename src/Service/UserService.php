@@ -2,9 +2,11 @@
 
 namespace Bot\Service;
 
+use Attributes\Service;
 use Bot\Entity\User;
 use Bot\Database\DatabaseHandler;
 
+#[Service]
 class UserService
 {
     function getAllUsers(): array

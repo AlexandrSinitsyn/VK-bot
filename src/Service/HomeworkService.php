@@ -2,10 +2,12 @@
 
 namespace Bot\Service;
 
+use Attributes\Service;
 use Bot\Entity\Homework;
 use Bot\Database\DatabaseHandler;
 use DateTime;
 
+#[Service]
 class HomeworkService
 {
     function getAllHomeworks(): array
