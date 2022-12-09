@@ -18,6 +18,6 @@ class Homework
 
     public function __toString(): string
     {
-        return "#" . $this->number . "\t" . $this->deadline->format("d/m/y") . PHP_EOL;
+        return '#' . $this->number . "\t" . $this->deadline->format('d/m/y') . PHP_EOL;
     }
 }

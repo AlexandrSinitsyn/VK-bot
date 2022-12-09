@@ -15,6 +15,6 @@ class User {
 
     public function __toString(): string
     {
-        return "#" . $this->id . "\t" . $this->name . "[" . ($this->student ? "student" : "teacher") . "]" . PHP_EOL;
+        return '#' . $this->id . "\t" . $this->name . '[' . ($this->student ? 'student' : 'teacher') . ']' . PHP_EOL;
     }
 }

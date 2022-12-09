@@ -10,7 +10,7 @@ class HelpCommand extends AbstractCommand
 {
     public function getName(): string
     {
-        return "Help";
+        return 'Help';
     }
 
     public function getDescription(): string
@@ -22,10 +22,10 @@ class HelpCommand extends AbstractCommand
     {
         $cmds = $this->getCommandStorage()->getCommands();
         $cmds = array_values($cmds);
-        $result = "";
+        $result = '';
 
         foreach ($cmds as $cmd) {
-            $result .= "-" . "\t" . $cmd->getName() . "\t-\t" . $cmd->getDescription() . PHP_EOL . PHP_EOL;
+            $result .= '-' . "\t" . $cmd->getName() . "\t-\t" . $cmd->getDescription() . PHP_EOL . PHP_EOL;
         }
 
         return $result;

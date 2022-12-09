@@ -10,12 +10,12 @@ use VK\Client\VKApiClient;
 class ServerHandler extends VKCallbackApiServerHandler
 {
     private VKApiClient $vkApi;
-    public CommandsStorage $storage;
+    private CommandsStorage $storage;
     private DatabaseHandler $databaseHandler;
 
     public function __construct()
     {
-        $this->vkApi = new VKApiClient("5.130");
+        $this->vkApi = new VKApiClient('5.130');
         $this->storage = new CommandsStorage($this->vkApi);
         $this->databaseHandler = new DatabaseHandler();
     }
@@ -29,9 +29,9 @@ class ServerHandler extends VKCallbackApiServerHandler
 
     public function messageNew(int $group_id, ?string $secret, array $object)
     {
-        $message = $object["message"];
+        $message = $object['message'];
         $text = $message->text;
-        $args = preg_split("/\s+/", $text);
+        $args = preg_split('/\s+/', $text);
         $user_id = $message->from_id;
 
         $command = $this->storage->getCommand(array_shift($args));
@@ -39,12 +39,12 @@ class ServerHandler extends VKCallbackApiServerHandler
             $command->execute($user_id, $args);
         } else {
             $this->vkApi->messages()->send(BOT_TOKEN, [
-                "user_id" => $user_id,
-                "random_id" => random_int(0, PHP_INT_MAX),
-                "message" => "Command not found!"
+                'user_id' => $user_id,
+                'random_id' => random_int(0, PHP_INT_MAX),
+                'message' => 'Command not found!'
             ]);
         }
 
-        echo "ok";
+        echo 'ok';
     }
 }

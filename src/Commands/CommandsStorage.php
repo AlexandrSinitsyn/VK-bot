@@ -3,15 +3,9 @@
 namespace Bot\Commands;
 
 use Bot\Attributes\Controller;
-//use Bot\Commands\Handlers\AddHomeworkCommand;
-//use Bot\Commands\Handlers\GetHomeworkCommand;
-//use Bot\Commands\Handlers\HelloCommand;
-//use Bot\Commands\Handlers\HelpCommand;
-//use Bot\Commands\Handlers\RegistrationCommand;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionObject;
 use VK\Client\VKApiClient;
 
 class CommandsStorage
@@ -23,21 +17,12 @@ class CommandsStorage
      */
     public function __construct(VKApiClient $vkApi)
     {
-//        $this->commands = array();
-//        $this->addCommands(
-//            new AddHomeworkCommand($vkApi, $this),
-//            new GetHomeworkCommand($vkApi, $this),
-//            new HelloCommand($vkApi, $this),
-//            new HelpCommand($vkApi, $this),
-//            new RegistrationCommand($vkApi, $this),
-//        );
-
         $this->commands = array();
-        foreach ($this->getAllClassesInProject()/*get_declared_classes()*/ as $class) {
+        foreach ($this->getAllClassesInProject() as $class) {
             if (is_subclass_of($class, 'Bot\Commands\Command') &&
                 count((new ReflectionClass($class))->getAttributes(Controller::class)) > 0) {
 
-                error_log(">" . $class . PHP_EOL);
+                error_log('>' . $class . PHP_EOL);
 
                 $this->addCommand(new $class($vkApi, $this));
             }
@@ -46,7 +31,7 @@ class CommandsStorage
 
     private function getAllClassesInProject(): array
     {
-        $allNames = preg_split("/[\r\n]+/", shell_exec('find ./src'));
+        $allNames = preg_split('/[\r\n]+/', shell_exec('find ./src'));
 
         $getName = function(string $path): string
         {
@@ -54,7 +39,7 @@ class CommandsStorage
 
             if (str_ends_with($path, 'config.php') || count($matches) < 2)
             {
-                return "FAILED";
+                return 'FAILED';
             }
 
             return 'Bot\\' . str_replace('/', '\\', $matches[1]);

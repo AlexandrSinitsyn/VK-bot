@@ -35,6 +35,6 @@ class RegistrationCommand extends AbstractCommand
 
         $result = $this->userService->save_user($user['first_name'], $user['id'], $is_student);
 
-        return $result ? "Ok" : "Sorry, smth failed";
+        return $result ? 'Ok' : 'Sorry, smth failed';
     }
 }
