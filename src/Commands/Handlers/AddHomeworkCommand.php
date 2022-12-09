@@ -31,6 +31,10 @@ class AddHomeworkCommand extends AbstractCommand
 
         preg_match('/^(\d+):\s*([0-9]{2}-[0-9]{2}-[0-9]{4})$/', trim(join(' ', $args)), $matches);
 
+        if (count($matches) < 3) {
+            return "Invalid command use. Look in `help`";
+        }
+
         try {
             $result = $this->homeworkService->save_homework($matches[1], array(), new DateTime($matches[2]));
 
