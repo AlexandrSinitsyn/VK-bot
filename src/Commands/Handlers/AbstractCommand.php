@@ -45,7 +45,7 @@ abstract class AbstractCommand implements Command
             'user_ids' => [$user_id]
         ]);
         $user = $users_get_response[0];
-        $found = $this->userService->get_user_by_id($user_id);
+        $found = $this->userService->getUserById($user_id);
 
         $message = $found === null ? $this->register($user, $args) : ($this->response($found, $args) ?? $this->register($user, $args));
 

@@ -11,16 +11,16 @@ class UserService
 {
     function getAllUsers(): array
     {
-        return DatabaseHandler::get_all_users();
+        return DatabaseHandler::getAllUsers();
     }
 
-    function get_user_by_id(int $id): ?User
+    function getUserById(int $id): ?User
     {
-        return DatabaseHandler::get_user($id);
+        return DatabaseHandler::getUser($id);
     }
 
-    function save_user(string $name, int $id, bool $isStudent): bool
+    function saveUser(string $name, int $id, bool $isStudent): bool
     {
-        return DatabaseHandler::save_user(new User($name, $id, $isStudent));
+        return DatabaseHandler::saveUser(new User($name, $id, $isStudent));
     }
 }

@@ -12,16 +12,16 @@ class HomeworkService
 {
     function getAllHomeworks(): array
     {
-        return DatabaseHandler::get_all_hws();
+        return DatabaseHandler::getAllHws();
     }
 
-    function get_homework_by_id(int $id): ?Homework
+    function getHomeworkById(int $id): ?Homework
     {
-        return DatabaseHandler::get_hw($id);
+        return DatabaseHandler::getHw($id);
     }
 
-    function save_homework(int $id, array $res, DateTime $deadline): bool
+    function saveHomework(int $id, array $res, DateTime $deadline): bool
     {
-        return DatabaseHandler::save_hw(new Homework($id, $res, $deadline));
+        return DatabaseHandler::saveHw(new Homework($id, $res, $deadline));
     }
 }
