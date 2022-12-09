@@ -1,11 +1,13 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace Bot\Commands\Handlers;
 
+use Bot\Attributes\Controller;
 use Bot\Entity\User;
 
 const DEBUG = true;
 
+#[Controller]
 class RegistrationCommand extends AbstractCommand
 {
     public function getName(): string

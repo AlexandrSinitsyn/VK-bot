@@ -2,12 +2,7 @@
 
 namespace Bot;
 
-use Bot\Commands\Command;
 use Bot\Commands\CommandsStorage;
-use Bot\Commands\Handlers\AddHomeworkCommand;
-use Bot\Commands\Handlers\GetHomeworkCommand;
-use Bot\Commands\Handlers\HelloCommand;
-use Bot\Commands\Handlers\RegistrationCommand;
 use Bot\Database\DatabaseHandler;
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;

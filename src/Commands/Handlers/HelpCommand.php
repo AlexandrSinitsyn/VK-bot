@@ -1,9 +1,11 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace Bot\Commands\Handlers;
 
+use Bot\Attributes\Controller;
 use Bot\Entity\User;
 
+#[Controller]
 class HelpCommand extends AbstractCommand
 {
     public function getName(): string

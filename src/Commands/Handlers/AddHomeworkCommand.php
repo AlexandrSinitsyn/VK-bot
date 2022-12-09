@@ -1,11 +1,13 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace Bot\Commands\Handlers;
 
+use Bot\Attributes\Controller;
 use Bot\Entity\User;
 use DateTime;
 use Exception;
 
+#[Controller]
 class AddHomeworkCommand extends AbstractCommand
 {
     public function getName(): string
