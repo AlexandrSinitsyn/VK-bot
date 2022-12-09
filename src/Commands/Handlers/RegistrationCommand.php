@@ -33,7 +33,7 @@ class RegistrationCommand extends AbstractCommand
     {
         $is_student = preg_match('/^([Ss]tudent[.!]?)?$/', strtolower($args[0] ?? '')) === 1;
 
-        $result = $this->userService->save_user($user['first_name'], $user['id'], $is_student);
+        $result = $this->userService->saveUser($user['first_name'], $user['id'], $is_student);
 
         return $result ? 'Ok' : 'Sorry, smth failed';
     }

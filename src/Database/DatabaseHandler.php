@@ -12,23 +12,23 @@ const HOMEWORKS_FILE = './homeworks.tmp';
 
 class DatabaseHandler
 {
-    static function get_user(int $user_id): ?User
+    static function getUser(int $user_id): ?User
     {
-        if (!key_exists($user_id, static::get_all_users())) {
+        if (!key_exists($user_id, static::getAllUsers())) {
             return null;
         }
-        return static::get_all_users()[$user_id];
+        return static::getAllUsers()[$user_id];
     }
 
-    static function get_hw(int $number): ?Homework
+    static function getHw(int $number): ?Homework
     {
-        if (!key_exists($number, static::get_all_hws())) {
+        if (!key_exists($number, static::getAllHws())) {
             return null;
         }
-        return static::get_all_hws()[$number];
+        return static::getAllHws()[$number];
     }
 
-    static function get_all_users(): array
+    static function getAllUsers(): array
     {
 //        return array(1 => new User('alexsin', 1, true));
         $txt_file = file_get_contents(USERS_FILE);
@@ -53,7 +53,7 @@ class DatabaseHandler
     /**
      * @throws Exception
      */
-    static function get_all_hws(): array
+    static function getAllHws(): array
     {
 //        return array(1 => new Homework(1, [], new DateTime()));
         $txt_file = file_get_contents(HOMEWORKS_FILE);
@@ -75,7 +75,7 @@ class DatabaseHandler
         return $hws;
     }
 
-    static function save_user(User $user): bool
+    static function saveUser(User $user): bool
     {
 //        $users = static::get_all_users();
 //
@@ -86,7 +86,7 @@ class DatabaseHandler
 //        }
     }
 
-    static function save_hw(Homework $hw): bool
+    static function saveHw(Homework $hw): bool
     {
 //        $hws = static::get_all_hws();
 //

@@ -31,7 +31,7 @@ class GetHomeworkCommand extends AbstractCommand
             return "Invalid command use. Look in `help`";
         }
 
-        $result = $this->homeworkService->get_homework_by_id($matches[1]);
+        $result = $this->homeworkService->getHomeworkById($matches[1]);
 
         return $result ?? 'Homework not found';
     }

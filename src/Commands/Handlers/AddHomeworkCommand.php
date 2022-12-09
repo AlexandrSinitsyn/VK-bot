@@ -36,7 +36,7 @@ class AddHomeworkCommand extends AbstractCommand
         }
 
         try {
-            $result = $this->homeworkService->save_homework($matches[1], array(), new DateTime($matches[2]));
+            $result = $this->homeworkService->saveHomework($matches[1], array(), new DateTime($matches[2]));
 
             return $result ? 'Ok' : 'Sorry, smth failed';
         } catch (Exception $e) {
