@@ -12,7 +12,7 @@ const HOMEWORKS_FILE = './homeworks.tmp';
 
 class DatabaseHandler
 {
-    static function getUser(int $user_id): ?User
+    public static function getUser(int $user_id): ?User
     {
         if (!key_exists($user_id, static::getAllUsers())) {
             return null;
@@ -20,7 +20,7 @@ class DatabaseHandler
         return static::getAllUsers()[$user_id];
     }
 
-    static function getHw(int $number): ?Homework
+    public static function getHw(int $number): ?Homework
     {
         if (!key_exists($number, static::getAllHws())) {
             return null;
@@ -28,7 +28,7 @@ class DatabaseHandler
         return static::getAllHws()[$number];
     }
 
-    static function getAllUsers(): array
+    public static function getAllUsers(): array
     {
 //        return array(1 => new User('alexsin', 1, true));
         $txt_file = file_get_contents(USERS_FILE);
@@ -53,7 +53,7 @@ class DatabaseHandler
     /**
      * @throws Exception
      */
-    static function getAllHws(): array
+    public static function getAllHws(): array
     {
 //        return array(1 => new Homework(1, [], new DateTime()));
         $txt_file = file_get_contents(HOMEWORKS_FILE);
@@ -75,7 +75,7 @@ class DatabaseHandler
         return $hws;
     }
 
-    static function saveUser(User $user): bool
+    public static function saveUser(User $user): bool
     {
 //        $users = static::get_all_users();
 //
@@ -86,7 +86,7 @@ class DatabaseHandler
 //        }
     }
 
-    static function saveHw(Homework $hw): bool
+    public static function saveHw(Homework $hw): bool
     {
 //        $hws = static::get_all_hws();
 //
@@ -95,5 +95,12 @@ class DatabaseHandler
 //        } else {
             return file_put_contents(HOMEWORKS_FILE, $hw->number . ' ' . $hw->deadline->format('d/m/y') . ' ' . join(',', $hw->results) . PHP_EOL, FILE_APPEND | LOCK_EX);
 //        }
+    }
+
+    public static function checkHw(int $number, int $studentId, int $mark): bool
+    {
+        $hw = static::getHw($number);
+        $hw->results[] = $mark;
+        return self::saveHw($hw);
     }
 }

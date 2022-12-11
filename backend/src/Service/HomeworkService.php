@@ -10,18 +10,23 @@ use DateTime;
 #[Service]
 class HomeworkService
 {
-    function getAllHomeworks(): array
+    public function getAllHomeworks(): array
     {
         return DatabaseHandler::getAllHws();
     }
 
-    function getHomeworkById(int $id): ?Homework
+    public function getHomeworkById(int $id): ?Homework
     {
         return DatabaseHandler::getHw($id);
     }
 
-    function saveHomework(int $id, array $res, DateTime $deadline): bool
+    public function saveHomework(int $id, array $res, DateTime $deadline): bool
     {
         return DatabaseHandler::saveHw(new Homework($id, $res, $deadline));
+    }
+
+    public function checkHomework(int $number, int $studentId, int $mark): bool
+    {
+        return DatabaseHandler::checkHw($number, $studentId, $mark);
     }
 }
