@@ -11,6 +11,7 @@ deprecated
 # out
 composer.lock
 vendor
+logs
 
 # local scripts
 scripts
