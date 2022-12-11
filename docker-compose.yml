@@ -15,6 +15,7 @@ services:
         image: php:8.1-fpm-alpine
         env_file:
             - .env
+            - db.env
         networks:
             - internal
         volumes:
@@ -27,15 +28,13 @@ services:
             - internal
         volumes:
             - ./backend/:/vk-bot/
+    db:
+        image: postgres:15-alpine
+        restart: always
+        environment:
+            - db.env
+        ports:
+            - "5432:5432"
 networks:
     internal:
         driver: bridge
-#    db:
-#        image: postgres:14.1-alpine
-#        restart: always
-#        environment:
-#            - POSTGRES_USER=reporter
-#            - POSTGRES_PASSWORD=test231330
-#            - POSGRES_DB
-#        ports:
-#            - '5432:5432'

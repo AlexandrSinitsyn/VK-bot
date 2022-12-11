@@ -6,12 +6,42 @@ use Bot\Entity\User;
 use Bot\Entity\Homework;
 use DateTime;
 use Exception;
+use JetBrains\PhpStorm\Internal\LanguageLevelTypeAware;
 
 const USERS_FILE = './users.tmp';
 const HOMEWORKS_FILE = './homeworks.tmp';
 
 class DatabaseHandler
 {
+    /**
+     * @throws DatabaseHandlerException
+     */
+    #[LanguageLevelTypeAware(['8.1' => 'PgSql\Result|false'], default: 'resource|false')]
+    private static function accessDb(#[LanguageLevelTypeAware(['8.1' => 'PgSql\Connection'], default: 'resource')] $query): string
+    {
+        $dbconn = pg_connect(/*"host=" . getenv('POSGRES_HOST') .*/ " dbname=" .getenv('POSGRES_DB') . " user=" . getenv('POSGRES_USER'))
+            or throw new DatabaseHandlerException('Could not connect: ' . pg_last_error());
+
+        $result = pg_query($query) or throw new DatabaseHandlerException('Query failed: ' . pg_last_error());
+
+        $res = array();
+        while ($line = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+            $res[] = join(' ', $line);
+        }
+
+        pg_free_result($result);
+
+        pg_close($dbconn);
+
+        return join("\n", $res);
+    }
+
+    private static function getFromFile(string $path): string
+    {
+        $txt_file = file_get_contents($path);
+        return $txt_file;
+    }
+
     static function getUser(int $user_id): ?User
     {
         if (!key_exists($user_id, static::getAllUsers())) {
@@ -31,8 +61,9 @@ class DatabaseHandler
     static function getAllUsers(): array
     {
 //        return array(1 => new User('alexsin', 1, true));
-        $txt_file = file_get_contents(USERS_FILE);
-        $rows = explode("\n", $txt_file);
+//        $total = static::getFromFile(USERS_FILE);
+        $total = static::accessDb('SELECT * FROM Student');
+        $rows = explode("\n", $total);
         array_shift($rows);
         array_pop($rows);
 
@@ -56,8 +87,9 @@ class DatabaseHandler
     static function getAllHws(): array
     {
 //        return array(1 => new Homework(1, [], new DateTime()));
-        $txt_file = file_get_contents(HOMEWORKS_FILE);
-        $rows = explode("\n", $txt_file);
+//        $total = static::getFromFile(HOMEWORKS_FILE);
+        $total = static::accessDb('SELECT * FROM Homework');
+        $rows = explode("\n", $total);
         array_shift($rows);
         array_pop($rows);
 

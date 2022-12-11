@@ -3,7 +3,7 @@
 
 # private
 private-keys.properties
-.env
+*.env
 
 # deprecated
 deprecated
