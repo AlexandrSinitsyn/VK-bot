@@ -2,6 +2,7 @@
 
 namespace Bot\Database;
 
+use Bot\Entity\HomeworkSolution;
 use Bot\Entity\User;
 use Bot\Entity\Homework;
 use DateTime;
@@ -9,6 +10,7 @@ use Exception;
 
 const USERS_FILE = './users.tmp';
 const HOMEWORKS_FILE = './homeworks.tmp';
+const HOMEWORK_SOLUTIONS_FILE = './solutions.tmp';
 
 class DatabaseHandler
 {
@@ -30,7 +32,6 @@ class DatabaseHandler
 
     public static function getAllUsers(): array
     {
-//        return array(1 => new User('alexsin', 1, true));
         $txt_file = file_get_contents(USERS_FILE);
         $rows = explode("\n", $txt_file);
         array_shift($rows);
@@ -55,7 +56,6 @@ class DatabaseHandler
      */
     public static function getAllHws(): array
     {
-//        return array(1 => new Homework(1, [], new DateTime()));
         $txt_file = file_get_contents(HOMEWORKS_FILE);
         $rows = explode("\n", $txt_file);
         array_shift($rows);
@@ -102,5 +102,39 @@ class DatabaseHandler
         $hw = static::getHw($number);
         $hw->results[] = $mark;
         return self::saveHw($hw);
+    }
+
+    public static function getAllSolutions(): array
+    {
+        $txt_file = file_get_contents(HOMEWORK_SOLUTIONS_FILE);
+        $rows = explode("\n", $txt_file);
+        array_shift($rows);
+        array_pop($rows);
+
+        $solutions = array();
+        foreach($rows as $row => $data) {
+            $row_data = explode(' ', $data, 3);
+
+            $homeworkId = (int) $row_data[0];
+            $userId = $row_data[1];
+            $text = $row_data[2];
+
+            $solutions[] = new HomeworkSolution($homeworkId, $userId, $text);
+        }
+
+        return $solutions;
+    }
+
+    public static function saveSolution(HomeworkSolution $solution): bool
+    {
+        return file_put_contents(HOMEWORK_SOLUTIONS_FILE, $solution->homeworkId . ' ' . $solution->userId . ' ' . $solution->text . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    public static function getSolution(int $homeworkId, int $userId): ?HomeworkSolution
+    {
+        $found = array_filter(static::getAllSolutions(),
+            fn(HomeworkSolution $s) => $s->homeworkId == $homeworkId && $s->userId == $userId);
+
+        return empty($found) ? null : $found[0];
     }
 }
