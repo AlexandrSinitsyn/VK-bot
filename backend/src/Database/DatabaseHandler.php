@@ -116,7 +116,7 @@ class DatabaseHandler
             $row_data = explode(' ', $data, 3);
 
             $homeworkId = (int) $row_data[0];
-            $userId = $row_data[1];
+            $userId = (int) $row_data[1];
             $text = $row_data[2];
 
             $solutions[] = new HomeworkSolution($homeworkId, $userId, $text);
@@ -135,6 +135,6 @@ class DatabaseHandler
         $found = array_filter(static::getAllSolutions(),
             fn(HomeworkSolution $s) => $s->homeworkId == $homeworkId && $s->userId == $userId);
 
-        return empty($found) ? null : $found[0];
+        return empty($found) ? null : end($found);
     }
 }
