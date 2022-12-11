@@ -1,10 +1,12 @@
 {
-  "require": {
-    "vkcom/vk-php-sdk": "^5.101"
-  },
-  "autoload": {
-    "psr-4": {
-      "Bot\\": "src/"
+    "require": {
+        "vkcom/vk-php-sdk": "^5.101",
+        "ext-pgsql": "*",
+        "ext-pdo_pgsql": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bot\\": "src/"
+        }
     }
-  }
 }

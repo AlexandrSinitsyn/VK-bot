@@ -19,10 +19,14 @@ class DatabaseHandler
     #[LanguageLevelTypeAware(['8.1' => 'PgSql\Result|false'], default: 'resource|false')]
     private static function accessDb(#[LanguageLevelTypeAware(['8.1' => 'PgSql\Connection'], default: 'resource')] $query): string
     {
-        $dbconn = pg_connect(/*"host=" . getenv('POSGRES_HOST') .*/ " dbname=" .getenv('POSGRES_DB') . " user=" . getenv('POSGRES_USER'))
-            or throw new DatabaseHandlerException('Could not connect: ' . pg_last_error());
+        $user = getenv('POSTGRES_USER');
+        $password = getenv('POSTGRES_PASSWORD');
+        $db = getenv('POSTGRES_DB');
 
-        $result = pg_query($query) or throw new DatabaseHandlerException('Query failed: ' . pg_last_error());
+        $dbconn = pg_connect("host=172.17.0.1 port=5432 dbname=$db user=$user password=$password")
+            or throw new DatabaseHandlerException('Failed to connect: ' . pg_last_error());
+
+        $result = pg_query($dbconn, $query) or throw new DatabaseHandlerException('Query failed: ' . pg_last_error());
 
         $res = array();
         while ($line = pg_fetch_array($result, null, PGSQL_ASSOC)) {
