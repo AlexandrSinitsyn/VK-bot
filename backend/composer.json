@@ -1,8 +1,6 @@
 {
     "require": {
-        "vkcom/vk-php-sdk": "^5.101",
-        "ext-pgsql": "*",
-        "ext-pdo_pgsql": "*"
+        "vkcom/vk-php-sdk": "^5.101"
     },
     "autoload": {
         "psr-4": {

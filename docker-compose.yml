@@ -4,7 +4,7 @@ services:
     nginx:
         image: nginx
         ports:
-            - "8080:80"
+            - "0.0.0.0:8080:80"
         networks:
             - internal
         volumes:
