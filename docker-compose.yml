@@ -1,41 +1,50 @@
 version: "3"
 
 services:
-    vk-bot-nginx:
-        image: nginx:alpine
+    nginx:
+        image: nginx
         ports:
-            - "8080:80"
+            - "0.0.0.0:8080:80"
         networks:
             - internal
         volumes:
             - ./nginx.conf:/etc/nginx/conf.d/default.conf
             - ./backend/:/vk-bot/
             - ./logs/nginx:/var/log/nginx/
-    vk-bot-php:
-        image: php:8.1-fpm-alpine
+        depends_on:
+            - php
+
+    php:
+        build:
+            context: ./backend/
+            dockerfile: Dockerfile
         env_file:
-            - .env
+            - ./backend/.env
+            - ./database/db.env
+        expose:
+            - 9000
         networks:
             - internal
         volumes:
             - ./backend/:/vk-bot/
             - ./logs/php.log:/var/log/fpm-php.www.log
-    composer:
+        depends_on:
+            - db
+
+    db:
         build:
-            dockerfile: ./Dockerfile
+            context: ./database
+            dockerfile: Dockerfile
+        restart: always
+        env_file:
+            - ./database/db.env
+        ports:
+            - "5432:5432"
         networks:
             - internal
         volumes:
-            - ./backend/:/vk-bot/
+            - ./database/:/vk-bot/
+
 networks:
     internal:
         driver: bridge
-#    db:
-#        image: postgres:14.1-alpine
-#        restart: always
-#        environment:
-#            - POSTGRES_USER=reporter
-#            - POSTGRES_PASSWORD=test231330
-#            - POSGRES_DB
-#        ports:
-#            - '5432:5432'

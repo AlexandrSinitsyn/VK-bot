@@ -5,8 +5,8 @@ namespace Bot\Database;
 use Bot\Entity\HomeworkSolution;
 use Bot\Entity\User;
 use Bot\Entity\Homework;
-use DateTime;
 use Exception;
+use JetBrains\PhpStorm\Internal\LanguageLevelTypeAware;
 
 const USERS_FILE = './users.tmp';
 const HOMEWORKS_FILE = './homeworks.tmp';
@@ -14,6 +14,44 @@ const HOMEWORK_SOLUTIONS_FILE = './solutions.tmp';
 
 class DatabaseHandler
 {
+    /**
+     * @throws DatabaseHandlerException
+     */
+    #[LanguageLevelTypeAware(['8.1' => 'PgSql\Result|false'], default: 'resource|false')]
+    private static function accessDb(#[LanguageLevelTypeAware(['8.1' => 'PgSql\Connection'], default: 'resource')] $query,
+                                     array $params = array()): string
+    {
+        $user = getenv('POSTGRES_USER');
+        $password = getenv('POSTGRES_PASSWORD');
+        $db = getenv('POSTGRES_DB');
+
+        $dbconn = pg_connect("host=172.17.0.1 port=5432 dbname=$db user=$user password=$password")
+            or throw new DatabaseHandlerException('Failed to connect: ' . pg_last_error());
+
+        $result = pg_query_params($dbconn, $query, $params) or throw new DatabaseHandlerException('Query failed: ' . pg_last_error());
+
+        $res = array();
+        while ($line = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+            $res[] = join(' ', $line);
+        }
+
+        pg_free_result($result);
+
+        pg_close($dbconn);
+
+        return join("\n", $res);
+    }
+
+    private static function getFromFile(string $path): array
+    {
+        $txt_file = file_get_contents($path);
+        $rows = explode("\n", $txt_file);
+        array_shift($rows);
+        array_pop($rows);
+
+        return $rows;
+    }
+
     public static function getUser(int $user_id): ?User
     {
         if (!key_exists($user_id, static::getAllUsers())) {
@@ -32,23 +70,10 @@ class DatabaseHandler
 
     public static function getAllUsers(): array
     {
-        $txt_file = file_get_contents(USERS_FILE);
-        $rows = explode("\n", $txt_file);
-        array_shift($rows);
-        array_pop($rows);
+        $total = static::accessDb('SELECT * FROM Student');
+        $rows = explode("\n", $total);
 
-        $users = array();
-        foreach($rows as $row => $data) {
-            $row_data = explode(' ', $data);
-
-            $id = (int) $row_data[0];
-            $name = $row_data[1];
-            $isStudent = (bool) $row_data[2];
-
-            $users[$id] = new User($name, $id, $isStudent);
-        }
-
-        return $users;
+        return DbParser::parseUsers($rows);
     }
 
     /**
@@ -56,23 +81,15 @@ class DatabaseHandler
      */
     public static function getAllHws(): array
     {
-        $txt_file = file_get_contents(HOMEWORKS_FILE);
-        $rows = explode("\n", $txt_file);
-        array_shift($rows);
-        array_pop($rows);
+        $total = static::accessDb('SELECT * FROM Homework');
+        $rows = explode("\n", $total);
 
-        $hws = array();
-        foreach($rows as $row => $data) {
-            $row_data = explode(' ', $data);
+        return DbParser::parseHomeworks($rows);
+    }
 
-            $id = (int) $row_data[0];
-            $deadline = new DateTime($row_data[1]);
-            $results = explode(',', $row_data[2]);
-
-            $hws[$id] = new Homework($id, $results, $deadline);
-        }
-
-        return $hws;
+    private static function saveToFile(string $path, string $data): bool
+    {
+        return file_put_contents($path, $data . PHP_EOL, FILE_APPEND | LOCK_EX);
     }
 
     public static function saveUser(User $user): bool
@@ -82,8 +99,10 @@ class DatabaseHandler
 //        if (key_exists($user->id, $users)) {
 //            return false;
 //        } else {
-            return file_put_contents(USERS_FILE, $user->id . ' ' . $user->name . ' ' . ($user->student ? '1' : '0') . PHP_EOL, FILE_APPEND | LOCK_EX);
+//            return static::saveToFile(USERS_FILE, $user->id . ' ' . $user->name . ' ' . ($user->student ? '1' : '0'));
 //        }
+
+        return boolval(static::accessDb('INSERT INTO Student VALUES ($1, $2, $3)', array($user->id, $user->name, strval($user->student))));
     }
 
     public static function saveHw(Homework $hw): bool
@@ -93,8 +112,10 @@ class DatabaseHandler
 //        if (key_exists($hw->number, $hws)) {
 //            return false;
 //        } else {
-            return file_put_contents(HOMEWORKS_FILE, $hw->number . ' ' . $hw->deadline->format('d/m/y') . ' ' . join(',', $hw->results) . PHP_EOL, FILE_APPEND | LOCK_EX);
+//            return static::saveToFile(HOMEWORKS_FILE, $hw->number . ' ' . $hw->deadline->format('d/m/y') . ' ' . join(',', $hw->results));
 //        }
+
+        return boolval(static::accessDb('INSERT INTO Homework VALUES ($1, $2)', array($hw->number, $hw->deadline->format('Y-m-d'))));
     }
 
     public static function checkHw(int $number, int $studentId, int $mark): bool
@@ -106,28 +127,16 @@ class DatabaseHandler
 
     public static function getAllSolutions(): array
     {
-        $txt_file = file_get_contents(HOMEWORK_SOLUTIONS_FILE);
-        $rows = explode("\n", $txt_file);
-        array_shift($rows);
-        array_pop($rows);
+        $total = static::accessDb('SELECT * FROM Solution');
+        $rows = explode("\n", $total);
 
-        $solutions = array();
-        foreach($rows as $row => $data) {
-            $row_data = explode(' ', $data, 3);
-
-            $homeworkId = (int) $row_data[0];
-            $userId = (int) $row_data[1];
-            $text = $row_data[2];
-
-            $solutions[] = new HomeworkSolution($homeworkId, $userId, $text);
-        }
-
-        return $solutions;
+        return DbParser::parseHomeworkSolutions($rows);
     }
 
     public static function saveSolution(HomeworkSolution $solution): bool
     {
-        return file_put_contents(HOMEWORK_SOLUTIONS_FILE, $solution->homeworkId . ' ' . $solution->userId . ' ' . $solution->text . PHP_EOL, FILE_APPEND | LOCK_EX);
+//        return file_put_contents(HOMEWORK_SOLUTIONS_FILE, $solution->homeworkId . ' ' . $solution->userId . ' ' . $solution->text . PHP_EOL, FILE_APPEND | LOCK_EX);
+        return boolval(static::accessDb('INSERT INTO Solution VALUES ($1, $2, $3)', array($solution->homeworkId, $solution->userId, $solution->text)));
     }
 
     public static function getSolution(int $homeworkId, int $userId): ?HomeworkSolution
