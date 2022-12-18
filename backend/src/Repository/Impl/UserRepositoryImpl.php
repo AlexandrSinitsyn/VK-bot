@@ -2,7 +2,7 @@
 
 namespace Bot\Repository\Impl;
 
-use Bot\Database\DatabaseHandlerException;
+use Bot\Exceptions\DatabaseHandlerException;
 use Bot\Entity\User;
 use Bot\Repository\UserRepository;
 

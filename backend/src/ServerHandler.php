@@ -3,7 +3,6 @@
 namespace Bot;
 
 use Bot\Commands\CommandsStorage;
-use Bot\Database\DatabaseHandler;
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;
 
@@ -11,13 +10,11 @@ class ServerHandler extends VKCallbackApiServerHandler
 {
     private VKApiClient $vkApi;
     private CommandsStorage $storage;
-    private DatabaseHandler $databaseHandler;
 
     public function __construct()
     {
         $this->vkApi = new VKApiClient('5.130');
         $this->storage = new CommandsStorage($this->vkApi);
-        $this->databaseHandler = new DatabaseHandler();
     }
 
     function confirmation(int $group_id, ?string $secret)

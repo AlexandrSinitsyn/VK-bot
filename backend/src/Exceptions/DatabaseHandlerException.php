@@ -1,6 +1,6 @@
 <?php
 
-namespace Bot\Database;
+namespace Bot\Exceptions;
 
 use Exception;
 
