@@ -2,26 +2,45 @@
 
 namespace Bot\Service;
 
-use Attributes\Service;
+use Bot\Attributes\Service;
 use Bot\Entity\Homework;
-use Bot\Database\DatabaseHandler;
+use Bot\Repository\HomeworkRepository;
+use Bot\Repository\Impl\HomeworkRepositoryImpl;
+use Bot\Repository\Impl\ResultRepositoryImpl;
+use Bot\Repository\ResultRepository;
 use DateTime;
 
 #[Service]
 class HomeworkService
 {
-    function getAllHomeworks(): array
+    private HomeworkRepository $repository;
+    private ResultRepository $resultRepository;
+
+    public function __construct()
     {
-        return DatabaseHandler::getAllHws();
+        $this->repository = new HomeworkRepositoryImpl();
+        $this->resultRepository = new ResultRepositoryImpl();
     }
 
-    function getHomeworkById(int $id): ?Homework
+    public function getAllHomeworks(): array
     {
-        return DatabaseHandler::getHw($id);
+        return $this->repository->getAllHomeworks();
     }
 
-    function saveHomework(int $id, array $res, DateTime $deadline): bool
+    public function getHomeworkById(int $id): ?Homework
     {
-        return DatabaseHandler::saveHw(new Homework($id, $res, $deadline));
+        $hw = $this->repository->getHomeworkById($id);
+        $hw->results = $this->resultRepository->getAllResultByHomework($id);
+        return $hw;
+    }
+
+    public function saveHomework(int $id, array $res, DateTime $deadline): bool
+    {
+        return $this->repository->saveHomework(new Homework($id, $res, $deadline));
+    }
+
+    public function checkHomework(int $number, int $studentId, int $mark): bool
+    {
+        return $this->resultRepository->saveResult($number, $studentId, $mark);
     }
 }

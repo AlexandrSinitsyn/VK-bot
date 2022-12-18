@@ -3,7 +3,6 @@
 namespace Bot;
 
 use Bot\Commands\CommandsStorage;
-use Bot\Database\DatabaseHandler;
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;
 
@@ -11,13 +10,11 @@ class ServerHandler extends VKCallbackApiServerHandler
 {
     private VKApiClient $vkApi;
     private CommandsStorage $storage;
-    private DatabaseHandler $databaseHandler;
 
     public function __construct()
     {
         $this->vkApi = new VKApiClient('5.130');
         $this->storage = new CommandsStorage($this->vkApi);
-        $this->databaseHandler = new DatabaseHandler();
     }
 
     function confirmation(int $group_id, ?string $secret)
@@ -36,7 +33,16 @@ class ServerHandler extends VKCallbackApiServerHandler
 
         $command = $this->storage->getCommand(array_shift($args));
         if ($command != null) {
-            $command->execute($user_id, $args);
+            try {
+                $command->execute($user_id, $args);
+            } catch (\Throwable $e) {
+                error_log(var_export($e->getMessage() . PHP_EOL . $e->getFile() . ' ' . $e->getLine(), true));
+                $this->vkApi->messages()->send(BOT_TOKEN, [
+                    'user_id' => $user_id,
+                    'random_id' => random_int(0, PHP_INT_MAX),
+                    'message' => var_export($e, true)
+                ]);
+            }
         } else {
             $this->vkApi->messages()->send(BOT_TOKEN, [
                 'user_id' => $user_id,

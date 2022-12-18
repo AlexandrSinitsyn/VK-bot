@@ -6,6 +6,7 @@ use Bot\Commands\Command;
 use Bot\Commands\CommandsStorage;
 use Bot\Entity\User;
 use Bot\Service\HomeworkService;
+use Bot\Service\HomeworksSolutionService;
 use Bot\Service\UserService;
 use VK\Client\VKApiClient;
 
@@ -15,6 +16,7 @@ abstract class AbstractCommand implements Command
     private CommandsStorage $commandsStorage;
     protected UserService $userService;
     protected HomeworkService $homeworkService;
+    protected HomeworksSolutionService $homeworksSolutionService;
 
     public function __construct(VKApiClient $vkApi, CommandsStorage $commandsStorage)
     {
@@ -22,6 +24,7 @@ abstract class AbstractCommand implements Command
         $this->commandsStorage = $commandsStorage;
         $this->userService = new UserService();
         $this->homeworkService = new HomeworkService();
+        $this->homeworksSolutionService = new HomeworksSolutionService();
     }
 
     public function getVkApi(): VKApiClient
