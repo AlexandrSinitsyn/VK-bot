@@ -9,8 +9,14 @@ CREATE TABLE Homework (
     Deadline date not null
 );
 
-CREATE TABLE Results (
+CREATE TABLE Result (
   HwId int REFERENCES Homework(Number) not null PRIMARY KEY ,
   StudentId int REFERENCES Student(Id) not null ,
   Mark int not null
+);
+
+CREATE TABLE Solution (
+    HwId int REFERENCES Homework(Number) not null PRIMARY KEY ,
+    StudentId int REFERENCES Student(Id) not null ,
+    Text varchar(255) not null
 );

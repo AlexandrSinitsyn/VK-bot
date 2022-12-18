@@ -2,25 +2,33 @@
 
 namespace Bot\Service;
 
-use Attributes\Service;
+use Bot\Attributes\Service;
 use Bot\Entity\User;
-use Bot\Database\DatabaseHandler;
+use Bot\Repository\Impl\UserRepositoryImpl;
+use Bot\Repository\UserRepository;
 
 #[Service]
 class UserService
 {
-    function getAllUsers(): array
+    private UserRepository $repository;
+
+    public function __construct()
     {
-        return DatabaseHandler::getAllUsers();
+        $this->repository = new UserRepositoryImpl();
     }
 
-    function getUserById(int $id): ?User
+    public function getAllUsers(): array
     {
-        return DatabaseHandler::getUser($id);
+        return $this->repository->getAllUsers();
     }
 
-    function saveUser(string $name, int $id, bool $isStudent): bool
+    public function getUserById(int $id): ?User
     {
-        return DatabaseHandler::saveUser(new User($name, $id, $isStudent));
+        return $this->repository->getUserById($id);
+    }
+
+    public function saveUser(string $name, int $id, bool $isStudent): bool
+    {
+        return $this->repository->saveUser(new User($name, $id, $isStudent));
     }
 }
