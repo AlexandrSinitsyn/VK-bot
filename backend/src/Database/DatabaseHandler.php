@@ -8,10 +8,6 @@ use Bot\Entity\Homework;
 use Exception;
 use JetBrains\PhpStorm\Internal\LanguageLevelTypeAware;
 
-const USERS_FILE = './users.tmp';
-const HOMEWORKS_FILE = './homeworks.tmp';
-const HOMEWORK_SOLUTIONS_FILE = './solutions.tmp';
-
 class DatabaseHandler
 {
     /**
@@ -41,16 +37,6 @@ class DatabaseHandler
         return $res;
     }
 
-    private static function getFromFile(string $path): array
-    {
-        $txt_file = file_get_contents($path);
-        $rows = explode("\n", $txt_file);
-        array_shift($rows);
-        array_pop($rows);
-
-        return $rows;
-    }
-
     public static function getUser(int $user_id): ?User
     {
         if (!key_exists($user_id, static::getAllUsers())) {
@@ -78,11 +64,6 @@ class DatabaseHandler
     public static function getAllHws(): array
     {
         return DbParser::parseHomeworks(static::accessDb('SELECT * FROM Homework'));
-    }
-
-    private static function saveToFile(string $path, string $data): bool
-    {
-        return file_put_contents($path, $data . PHP_EOL, FILE_APPEND | LOCK_EX);
     }
 
     public static function saveUser(User $user): bool

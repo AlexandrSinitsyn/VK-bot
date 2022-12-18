@@ -2,7 +2,7 @@
 
 namespace Bot\Attributes;
 
-#[\Attribute] class Service
+#[\Attribute] class Repository
 {
     public function __construct(public string $version = '1.0')
     {

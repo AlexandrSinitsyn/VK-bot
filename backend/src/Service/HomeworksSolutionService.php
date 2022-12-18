@@ -2,27 +2,33 @@
 
 namespace Bot\Service;
 
-use Attributes\Service;
-use Bot\Entity\Homework;
-use Bot\Database\DatabaseHandler;
+use Bot\Attributes\Service;
 use Bot\Entity\HomeworkSolution;
-use DateTime;
+use Bot\Repository\HomeworkSolutionRepository;
+use Bot\Repository\Impl\HomeworkSolutionRepositoryImpl;
 
 #[Service]
 class HomeworksSolutionService
 {
-    public function getAllSolutions(): array
+    private HomeworkSolutionRepository $repository;
+
+    public function __construct()
     {
-        return DatabaseHandler::getAllSolutions();
+        $this->repository = new HomeworkSolutionRepositoryImpl();
     }
 
-    public function saveSolution(int $homeworkId, int $userId, string $text): bool
+    public function getAllSolutions(): array
     {
-        return DatabaseHandler::saveSolution(new HomeworkSolution($homeworkId, $userId, $text));
+        return $this->repository->getAllHomeworkSolutions();
     }
 
     public function getSolution(int $homeworkId, int $userId): ?HomeworkSolution
     {
-        return DatabaseHandler::getSolution($homeworkId, $userId);
+        return $this->repository->getHomeworkSolutionById($homeworkId, $userId);
+    }
+
+    public function saveSolution(int $homeworkId, int $userId, string $text): bool
+    {
+        return $this->repository->saveHomeworkSolution(new HomeworkSolution($homeworkId, $userId, $text));
     }
 }

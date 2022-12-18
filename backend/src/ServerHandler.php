@@ -39,7 +39,7 @@ class ServerHandler extends VKCallbackApiServerHandler
             try {
                 $command->execute($user_id, $args);
             } catch (\Throwable $e) {
-                error_log(var_export($e, true));
+                error_log(var_export($e->getMessage() . PHP_EOL . $e->getFile() . ' ' . $e->getLine(), true));
                 $this->vkApi->messages()->send(BOT_TOKEN, [
                     'user_id' => $user_id,
                     'random_id' => random_int(0, PHP_INT_MAX),
