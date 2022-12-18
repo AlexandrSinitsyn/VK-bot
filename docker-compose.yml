@@ -21,6 +21,8 @@ services:
         env_file:
             - ./backend/.env
             - ./database/db.env
+        ports:
+            - "11211:11211"
         expose:
             - 9000
         networks:

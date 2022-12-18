@@ -15,6 +15,19 @@ class HomeworkSolution
         $this->text = $text;
     }
 
+    public function toArray(): array
+    {
+        return array(
+            'hwid' => $this->homeworkId,
+            'uid' => $this->userId,
+            'text' => $this->text
+        );
+    }
+
+    public static function fromArray(array $arr): HomeworkSolution
+    {
+        return new HomeworkSolution((int) $arr['hwid'], (int) $arr['uid'], $arr['text']);
+    }
 
     public function __toString(): string
     {

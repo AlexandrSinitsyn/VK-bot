@@ -3,6 +3,7 @@
 namespace Bot\Commands;
 
 use Bot\Attributes\Controller;
+use Bot\Cache\CacheAdapter;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
@@ -15,7 +16,7 @@ class CommandsStorage
     /**
      * @throws ReflectionException
      */
-    public function __construct(VKApiClient $vkApi)
+    public function __construct(VKApiClient $vkApi, CacheAdapter $cacheAdapter)
     {
         $this->commands = array();
         foreach ($this->getAllClassesInProject() as $class) {
@@ -24,7 +25,7 @@ class CommandsStorage
 
                 error_log('>' . $class . PHP_EOL);
 
-                $this->addCommand(new $class($vkApi, $this));
+                $this->addCommand(new $class($vkApi, $cacheAdapter, $this));
             }
         }
     }
