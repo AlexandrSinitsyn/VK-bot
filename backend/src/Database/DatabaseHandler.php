@@ -17,9 +17,8 @@ class DatabaseHandler
     /**
      * @throws DatabaseHandlerException
      */
-    #[LanguageLevelTypeAware(['8.1' => 'PgSql\Result|false'], default: 'resource|false')]
     private static function accessDb(#[LanguageLevelTypeAware(['8.1' => 'PgSql\Connection'], default: 'resource')] $query,
-                                     array $params = array()): string
+                                     array $params = array()): array
     {
         $user = getenv('POSTGRES_USER');
         $password = getenv('POSTGRES_PASSWORD');
@@ -39,7 +38,7 @@ class DatabaseHandler
 
         pg_close($dbconn);
 
-        return join("\n", $res);
+        return $res;
     }
 
     private static function getFromFile(string $path): array
@@ -70,10 +69,7 @@ class DatabaseHandler
 
     public static function getAllUsers(): array
     {
-        $total = static::accessDb('SELECT * FROM Student');
-        $rows = explode("\n", $total);
-
-        return DbParser::parseUsers($rows);
+        return DbParser::parseUsers(static::accessDb('SELECT * FROM Student'));
     }
 
     /**
@@ -81,10 +77,7 @@ class DatabaseHandler
      */
     public static function getAllHws(): array
     {
-        $total = static::accessDb('SELECT * FROM Homework');
-        $rows = explode("\n", $total);
-
-        return DbParser::parseHomeworks($rows);
+        return DbParser::parseHomeworks(static::accessDb('SELECT * FROM Homework'));
     }
 
     private static function saveToFile(string $path, string $data): bool
@@ -102,7 +95,9 @@ class DatabaseHandler
 //            return static::saveToFile(USERS_FILE, $user->id . ' ' . $user->name . ' ' . ($user->student ? '1' : '0'));
 //        }
 
-        return boolval(static::accessDb('INSERT INTO Student VALUES ($1, $2, $3)', array($user->id, $user->name, strval($user->student))));
+        static::accessDb('INSERT INTO Student VALUES ($1, $2, $3)', array($user->id, $user->name, $user->student ? '1' : '0'));
+
+        return true;
     }
 
     public static function saveHw(Homework $hw): bool
@@ -115,7 +110,9 @@ class DatabaseHandler
 //            return static::saveToFile(HOMEWORKS_FILE, $hw->number . ' ' . $hw->deadline->format('d/m/y') . ' ' . join(',', $hw->results));
 //        }
 
-        return boolval(static::accessDb('INSERT INTO Homework VALUES ($1, $2)', array($hw->number, $hw->deadline->format('Y-m-d'))));
+        static::accessDb('INSERT INTO Homework VALUES ($1, $2)', array($hw->number, $hw->deadline->format('Y-m-d')));
+
+        return true;
     }
 
     public static function checkHw(int $number, int $studentId, int $mark): bool
@@ -127,16 +124,15 @@ class DatabaseHandler
 
     public static function getAllSolutions(): array
     {
-        $total = static::accessDb('SELECT * FROM Solution');
-        $rows = explode("\n", $total);
-
-        return DbParser::parseHomeworkSolutions($rows);
+        return DbParser::parseHomeworkSolutions(static::accessDb('SELECT * FROM Solution'));
     }
 
     public static function saveSolution(HomeworkSolution $solution): bool
     {
 //        return file_put_contents(HOMEWORK_SOLUTIONS_FILE, $solution->homeworkId . ' ' . $solution->userId . ' ' . $solution->text . PHP_EOL, FILE_APPEND | LOCK_EX);
-        return boolval(static::accessDb('INSERT INTO Solution VALUES ($1, $2, $3)', array($solution->homeworkId, $solution->userId, $solution->text)));
+        static::accessDb('INSERT INTO Solution VALUES ($1, $2, $3)', array($solution->homeworkId, $solution->userId, $solution->text));
+
+        return true;
     }
 
     public static function getSolution(int $homeworkId, int $userId): ?HomeworkSolution
