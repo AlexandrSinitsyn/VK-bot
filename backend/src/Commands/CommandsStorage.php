@@ -8,7 +8,6 @@ use Bot\Cache\CacheAdapter;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
-use VK\Client\VKApiClient;
 
 class CommandsStorage
 {
@@ -17,7 +16,7 @@ class CommandsStorage
     /**
      * @throws ReflectionException
      */
-    public function __construct(VKApiClient $vkApi, CacheAdapter $cacheAdapter)
+    public function __construct(CacheAdapter $cacheAdapter)
     {
         $last = function (string $path): string {
             $arr = explode('\\', $path);
@@ -44,7 +43,7 @@ class CommandsStorage
 
                 error_log('#c>' . $class . PHP_EOL);
 
-                $this->addCommand(new $class($vkApi, $cacheAdapter, $getValidator($class . 'Validator'), $this));
+                $this->addCommand(new $class($cacheAdapter, $getValidator($class . 'Validator'), $this));
             }
         }
     }
