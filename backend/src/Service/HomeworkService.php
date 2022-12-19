@@ -30,7 +30,11 @@ class HomeworkService
     public function getHomeworkById(int $id): ?Homework
     {
         $hw = $this->repository->getHomeworkById($id);
-        $hw->results = $this->resultRepository->getAllResultByHomework($id);
+
+        if ($hw) {
+            $hw->results = $this->resultRepository->getAllResultByHomework($id);
+        }
+
         return $hw;
     }
 

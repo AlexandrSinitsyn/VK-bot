@@ -25,15 +25,14 @@ class AddHomeworkCommand extends AbstractCommand
 
     protected function response(User $user, array $args): ?string
     {
-        if ($user->student) {
-            return null;
-        }
-
         preg_match('/^(\d+):\s*([0-9]{2}-[0-9]{2}-[0-9]{4})$/', trim(join(' ', $args)), $matches);
 
-        if (count($matches) < 3) {
-            return "Invalid command use. Look in `help`";
-        }
+        $this->transaction()
+            ->pipe(fn() => $this->validate('isStudent', $user))
+            ->pipe(fn() => $this->validate('arguments', $matches))
+            ->pipe(fn() => $this->validate('date', $matches[2]))
+            ->pipe(fn() => $this->validate('unique', (int) $matches[1]))
+            ->commit()->asFailure()?->onThrow();
 
         try {
             $result = $this->homeworkService->saveHomework($matches[1], array(), new DateTime($matches[2]));

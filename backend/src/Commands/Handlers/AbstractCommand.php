@@ -12,6 +12,7 @@ use Bot\Service\HomeworkService;
 use Bot\Service\HomeworksSolutionService;
 use Bot\Service\UserService;
 use Bot\Validator\ValidationResult;
+use Bot\Validator\ValidationTransaction;
 use Bot\Validator\Validator;
 
 abstract class AbstractCommand implements Command
@@ -41,6 +42,10 @@ abstract class AbstractCommand implements Command
         return $this->validator->validate($methodName, $value);
     }
 
+    public function transaction(): ValidationTransaction
+    {
+        return new ValidationTransaction();
+    }
 
     /**
      * @throws ValidationException
