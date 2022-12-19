@@ -3,6 +3,7 @@
 namespace Bot\Commands;
 
 use Bot\Attributes\Controller;
+use Bot\Attributes\Validator;
 use Bot\Cache\CacheAdapter;
 use Exception;
 use ReflectionClass;
@@ -18,14 +19,32 @@ class CommandsStorage
      */
     public function __construct(VKApiClient $vkApi, CacheAdapter $cacheAdapter)
     {
+        $last = function (string $path): string {
+            $arr = explode('\\', $path);
+            return end($arr);
+        };
+
+        $validators = array();
+        foreach ($this->getAllClassesInProject() as $class) {
+            if (is_subclass_of($class, 'Bot\Validator\Validator') &&
+                count((new ReflectionClass($class))->getAttributes(Validator::class)) > 0) {
+
+                error_log('#v>' . $class . PHP_EOL);
+
+                $validators[$last($class)] = new $class();
+            }
+        }
+
+        $getValidator = fn(string $name) => $validators[$last($name)] ?? $validators['OkValidator'];
+
         $this->commands = array();
         foreach ($this->getAllClassesInProject() as $class) {
             if (is_subclass_of($class, 'Bot\Commands\Command') &&
                 count((new ReflectionClass($class))->getAttributes(Controller::class)) > 0) {
 
-                error_log('>' . $class . PHP_EOL);
+                error_log('#c>' . $class . PHP_EOL);
 
-                $this->addCommand(new $class($vkApi, $cacheAdapter, $this));
+                $this->addCommand(new $class($vkApi, $cacheAdapter, $getValidator($class . 'Validator'), $this));
             }
         }
     }

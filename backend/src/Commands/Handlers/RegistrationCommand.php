@@ -5,8 +5,6 @@ namespace Bot\Commands\Handlers;
 use Bot\Attributes\Controller;
 use Bot\Entity\User;
 
-const DEBUG = true;
-
 #[Controller]
 class RegistrationCommand extends AbstractCommand
 {
@@ -17,23 +15,21 @@ class RegistrationCommand extends AbstractCommand
 
     public function getDescription(): string
     {
-        return 'User registration.' . PHP_EOL . 'Usage example: `Register student.`.' . PHP_EOL . 'Usage regex: `Register\s+([Ss]tudent[.!]?)?\s*`';
+        return 'User registration.' . PHP_EOL . 'Usage example: `Register student.`.' . PHP_EOL . 'Usage regex: `Register\s+(([Ss]tudent[.!]?)?|[Tt]eacher[.!])\s*`';
     }
 
     protected function response(User $user, array $args): ?string
     {
-        if (DEBUG) {
-            return null;
-        } else {
-            return 'You can not re-register';
-        }
+        return 'You can not re-register';
     }
 
     protected function register(array $user, array $args): string
     {
-        $is_student = preg_match('/^([Ss]tudent[.!]?)?$/', strtolower($args[0] ?? '')) === 1;
+        $arg = strtolower($args[0] ?? '');
 
-        $result = $this->userService->saveUser($user['first_name'], $user['id'], $is_student);
+        $this->validate('command', $arg)->asFailure()?->onThrow();
+
+        $result = $this->userService->saveUser($user['first_name'], $user['id'], !str_starts_with($arg, 't'));
 
         return $result ? 'Ok' : 'Sorry, smth failed';
     }

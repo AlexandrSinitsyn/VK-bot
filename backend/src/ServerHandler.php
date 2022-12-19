@@ -4,6 +4,8 @@ namespace Bot;
 
 use Bot\Cache\CacheAdapter;
 use Bot\Commands\CommandsStorage;
+use Bot\Exceptions\ValidationException;
+use Throwable;
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;
 
@@ -38,8 +40,14 @@ class ServerHandler extends VKCallbackApiServerHandler
         if ($command != null) {
             try {
                 $command->execute($user_id, $args);
-            } catch (\Throwable $e) {
-                error_log(var_export($e->getMessage() . PHP_EOL . $e->getFile() . ' ' . $e->getLine(), true));
+            } catch (ValidationException $e) {
+                $this->vkApi->messages()->send(BOT_TOKEN, [
+                    'user_id' => $user_id,
+                    'random_id' => random_int(0, PHP_INT_MAX),
+                    'message' => 'Validation failed: ' . $e->getMessage()
+                ]);
+            } catch (Throwable $e) {
+                error_log(var_export(get_class($e) . ' : ' . $e->getMessage() . PHP_EOL . $e->getFile() . ' ' . $e->getLine(), true));
                 $this->vkApi->messages()->send(BOT_TOKEN, [
                     'user_id' => $user_id,
                     'random_id' => random_int(0, PHP_INT_MAX),
