@@ -21,19 +21,17 @@ class GetSolutionCommand extends AbstractCommand
 
     protected function response(User $user, array $args): ?string
     {
-        if ($user->student) {
-            return null;
-        }
-
         preg_match('/^(\d+):\s+(\d+)$/', trim(join(' ', $args)), $matches);
 
-        if (count($matches) < 3) {
-            return "Invalid command use. Look in `help`";
-        }
+        $this->transaction()
+            ->pipe(fn() => $this->validate('isTeacher', $user))
+            ->pipe(fn() => $this->validate('arguments', $matches))
+            ->pipe(fn() => $this->validate('homeworkExists', (int) $matches[1]))
+            ->pipe(fn() => $this->validate('solutionExists', array('hwid' => (int) $matches[1], 'uid' => (int) $matches[2])))
+            ->pipe(fn() => $this->validate('notChecked', array('hwid' => (int) $matches[1], 'uid' => (int) $matches[2])))
+            ->commit()->asFailure()?->onThrow();
 
-        $result = $this->homeworksSolutionService->getSolution($matches[1], $matches[2]);
-
-        return strval($result ?? 'Solution not found');
+        return strval($this->homeworksSolutionService->getSolution($matches[1], $matches[2]));
     }
 
     protected function register(array $user, array $args): string

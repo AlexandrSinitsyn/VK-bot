@@ -21,15 +21,12 @@ class GetHomeworkCommand extends AbstractCommand
 
     protected function response(User $user, array $args): ?string
     {
-        if (!$user->student) {
-            return null;
-        }
-
         preg_match('/^(\d+)$/', trim(join(' ', $args)), $matches);
 
-        if (count($matches) < 2) {
-            return "Invalid command use. Look in `help`";
-        }
+        $this->transaction()
+            ->pipe(fn() => $this->validate('isStudent', $user))
+            ->pipe(fn() => $this->validate('arguments', $matches))
+            ->commit()->asFailure()?->onThrow();
 
         $result = $this->homeworkService->getHomeworkById($matches[1]);
 

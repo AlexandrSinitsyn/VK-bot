@@ -23,27 +23,23 @@ class AddSolutionCommand extends AbstractCommand
 
     protected function response(User $user, array $args): ?string
     {
-        if (!$user->student) {
-            return null;
-        }
-
         preg_match('/^(\d+):\s*(.*)\s*$/', trim(join(' ', $args)), $matches);
 
-        if (count($matches) < 3) {
-            return "Invalid command use. Look in `help`";
-        }
+        $this->transaction()
+            ->pipe(fn() => $this->validate('isStudent', $user))
+            ->pipe(fn() => $this->validate('arguments', $matches))
+            ->pipe(fn() => $this->validate('homeworkId', (int) $matches[1]))
+            ->pipe(fn() => $this->validate('unique', array('hwid' => (int) $matches[1], 'uid' => $user->id)))
+            ->pipe(fn() => $this->validate('deadline', (int) $matches[1]))
+            ->commit()->asFailure()?->onThrow();
 
-        try {
-            $result = $this->homeworksSolutionService->saveSolution($matches[1], $user->id, $matches[2]);
+        $result = $this->homeworksSolutionService->saveSolution($matches[1], $user->id, $matches[2]);
 
-            return $result ? 'Ok' : 'Sorry, smth failed';
-        } catch (Exception $e) {
-            return "Failed: $e";
-        }
+        return $result ? 'Ok' : 'Sorry, smth failed';
     }
 
     protected function register(array $user, array $args): string
     {
-        return 'You can not add homeworks til you are not a teacher';
+        return 'You can not add solutions til you are not a student';
     }
 }

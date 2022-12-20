@@ -28,7 +28,7 @@ class AddHomeworkCommand extends AbstractCommand
         preg_match('/^(\d+):\s*([0-9]{2}-[0-9]{2}-[0-9]{4})$/', trim(join(' ', $args)), $matches);
 
         $this->transaction()
-            ->pipe(fn() => $this->validate('isStudent', $user))
+            ->pipe(fn() => $this->validate('isTeacher', $user))
             ->pipe(fn() => $this->validate('arguments', $matches))
             ->pipe(fn() => $this->validate('date', $matches[2]))
             ->pipe(fn() => $this->validate('unique', (int) $matches[1]))

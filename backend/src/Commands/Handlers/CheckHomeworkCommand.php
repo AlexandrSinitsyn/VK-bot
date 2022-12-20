@@ -23,23 +23,19 @@ class CheckHomeworkCommand extends AbstractCommand
 
     protected function response(User $user, array $args): ?string
     {
-        if ($user->student) {
-            return null;
-        }
-
         preg_match('/^(\d+):\s*(\d+)\s+->\s+(\d+)$/', trim(join(' ', $args)), $matches);
 
-        if (count($matches) < 4) {
-            return "Invalid command use. Look in `help`";
-        }
+        $this->transaction()
+            ->pipe(fn() => $this->validate('isTeacher', $user))
+            ->pipe(fn() => $this->validate('arguments', $matches))
+            ->pipe(fn() => $this->validate('homeworkId', (int) $matches[1]))
+            ->pipe(fn() => $this->validate('studentId', (int) $matches[2]))
+            ->pipe(fn() => $this->validate('mark', (int) $matches[3]))
+            ->commit()->asFailure()?->onThrow();
 
-        try {
-            $result = $this->homeworkService->checkHomework($matches[1], $matches[2], $matches[3]);
+        $result = $this->homeworkService->checkHomework($matches[1], $matches[2], $matches[3]);
 
-            return $result ? 'Ok' : 'Sorry, smth failed';
-        } catch (Exception $e) {
-            return "Failed: $e";
-        }
+        return $result ? 'Ok' : 'Sorry, smth failed';
     }
 
     protected function register(array $user, array $args): string

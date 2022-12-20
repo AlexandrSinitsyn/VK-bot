@@ -21,23 +21,15 @@ class GetHomeworkResultsCommand extends AbstractCommand
 
     protected function response(User $user, array $args): ?string
     {
-        if (!$user->student) {
-            return null;
-        }
-
         preg_match('/^(\d+)$/', trim(join(' ', $args)), $matches);
 
-        if (count($matches) < 2) {
-            return "Invalid command use. Look in `help`";
-        }
+        $this->transaction()
+            ->pipe(fn() => $this->validate('isStudent', $user))
+            ->pipe(fn() => $this->validate('arguments', $matches))
+            ->pipe(fn() => $this->validate('homeworkExists', (int) $matches[1]))
+            ->commit()->asFailure()?->onThrow();
 
-        $result = $this->homeworkService->getHomeworkById($matches[1]);
-
-        if ($result == null) {
-            return 'Homework not found';
-        }
-
-        return join(' ', $result->results);
+        return join(' ', $this->homeworkService->getHomeworkById($matches[1])->results);
     }
 
     protected function register(array $user, array $args): string

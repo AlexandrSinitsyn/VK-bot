@@ -14,7 +14,7 @@ use Exception;
 class AddHomeworkCommandValidator extends AbstractValidator
 {
     #[ValidatorCommand]
-    public function validateIsStudent(User $user): ValidationResult
+    public function validateIsTeacher(User $user): ValidationResult
     {
         return ValidationResult::process($user->student === false,
             'Only teachers can add homework');
@@ -24,7 +24,7 @@ class AddHomeworkCommandValidator extends AbstractValidator
     public function validateArguments(array $matches): ValidationResult
     {
         return ValidationResult::process(count($matches) === 3,
-            "Invalid number of arguments. Look in `help`");
+            'Invalid number of arguments. Look in `help`');
     }
 
     #[ValidatorCommand]
@@ -46,9 +46,9 @@ class AddHomeworkCommandValidator extends AbstractValidator
     #[ValidatorCommand]
     public function validateUnique(int $number): ValidationResult
     {
-        $homeworkSolution = new HomeworkService();
+        $homeworkService = new HomeworkService();
 
-        return ValidationResult::process($homeworkSolution->getHomeworkById($number) == null,
+        return ValidationResult::process($homeworkService->getHomeworkById($number) == null,
             'Homework is not unique');
     }
 }
