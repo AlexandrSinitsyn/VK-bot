@@ -4,7 +4,6 @@ namespace Bot\Validator\ValidatorImpl;
 
 use Bot\Attributes\ValidatorCommand;
 use Bot\Cache\CacheAdapter;
-use Bot\Entity\User;
 use Bot\Service\HomeworkService;
 use Bot\Service\HomeworksSolutionService;
 use Bot\Validator\ValidationResult;
@@ -20,20 +19,6 @@ class GetSolutionCommandValidator extends AbstractValidator
     {
         $this->homeworkService = new HomeworkService();
         $this->solutionService = new HomeworksSolutionService(new CacheAdapter());
-    }
-
-    #[ValidatorCommand]
-    public function validateIsTeacher(User $user): ValidationResult
-    {
-        return ValidationResult::process($user->student === false,
-            'Only teachers can check homeworks');
-    }
-
-    #[ValidatorCommand]
-    public function validateArguments(array $matches): ValidationResult
-    {
-        return ValidationResult::process(count($matches) === 3,
-            'Invalid number of arguments. Look in `help`');
     }
 
     #[ValidatorCommand]

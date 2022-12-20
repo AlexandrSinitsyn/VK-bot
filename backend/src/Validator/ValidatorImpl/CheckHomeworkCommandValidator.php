@@ -3,7 +3,6 @@
 namespace Bot\Validator\ValidatorImpl;
 
 use Bot\Attributes\ValidatorCommand;
-use Bot\Entity\User;
 use Bot\Service\HomeworkService;
 use Bot\Service\UserService;
 use Bot\Validator\ValidationResult;
@@ -12,20 +11,6 @@ use Bot\Attributes\Validator;
 #[Validator]
 class CheckHomeworkCommandValidator extends AbstractValidator
 {
-    #[ValidatorCommand]
-    public function validateIsTeacher(User $user): ValidationResult
-    {
-        return ValidationResult::process($user->student === false,
-            'Only teachers can check homeworks');
-    }
-
-    #[ValidatorCommand]
-    public function validateArguments(array $matches): ValidationResult
-    {
-        return ValidationResult::process(count($matches) === 4,
-            'Invalid number of arguments. Look in `help`');
-    }
-
     #[ValidatorCommand]
     public function validateHomeworkId(int $id): ValidationResult
     {

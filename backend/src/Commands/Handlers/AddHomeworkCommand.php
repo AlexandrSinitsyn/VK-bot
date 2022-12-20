@@ -5,7 +5,6 @@ namespace Bot\Commands\Handlers;
 use Bot\Attributes\Controller;
 use Bot\Entity\User;
 use DateTime;
-use Exception;
 
 #[Controller]
 class AddHomeworkCommand extends AbstractCommand
@@ -17,29 +16,25 @@ class AddHomeworkCommand extends AbstractCommand
 
     public function getDescription(): string
     {
-//        return 'Add new homework.' . PHP_EOL . 'Usage example: `add-hw 1: 00:00 01:01:2023`' . PHP_EOL .
-//            'Usage regex: `add-hw\s+(\d+):\s*[0-9]{2}:[0-9]{2}\s+[0-9]{2}-[0-9]{2}-[0-9]{4}\s*`';
-        return 'Add new homework.' . PHP_EOL . 'Usage example: `add-hw 1: 01-01-2023`' . PHP_EOL .
-            'Usage regex: `add-hw\s+(\d+):\s*[0-9]{2}-[0-9]{2}-[0-9]{4}\s*`';
+        return 'Add new homework.' . PHP_EOL . 'Usage example: `add-hw hw=1: deadline=01-01-2023`' . PHP_EOL .
+            'Usage regex: `add-hw\s+(hw\s*=|n\s*=)?\s*(\d+)\s*:\s*(deadline\s*=|d\s*=)?\s*(\d{1,2}([-\/])\d{1,2}\5\d{2,4})\s*`';
     }
 
     protected function response(User $user, array $args): string
     {
-        preg_match('/^(\d+):\s*([0-9]{2}-[0-9]{2}-[0-9]{4})$/', trim(join(' ', $args)), $matches);
+        preg_match('/^(hw\s*=|n\s*=)?\s*(\d+)\s*:\s*(deadline\s*=|d\s*=)?\s*(\d{1,2}([-\/])\d{1,2}\5\d{2,4})$/',
+            trim(join(' ', $args)), $matches);
 
         $this->transaction()
             ->pipe(fn() => $this->validate('isTeacher', $user))
-            ->pipe(fn() => $this->validate('arguments', $matches))
-            ->pipe(fn() => $this->validate('date', $matches[2]))
-            ->pipe(fn() => $this->validate('unique', (int) $matches[1]))
+            ->pipe(fn() => $this->validate('arguments', array('matches' => $matches, 'count' => 6)))
+            ->pipe(fn() => $this->validate('date', $matches[4]))
+            ->pipe(fn() => $this->validate('unique', (int) $matches[2]))
             ->commit()->asFailure()?->onThrow();
 
-        try {
-            $result = $this->homeworkService->saveHomework($matches[1], array(), new DateTime($matches[2]));
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $result = $this->homeworkService->saveHomework($matches[1], array(), new DateTime($matches[2]));
 
-            return $result ? 'Ok' : 'Sorry, smth failed';
-        } catch (Exception $e) {
-            return "Failed: $e";
-        }
+        return $result ? 'Ok' : 'Sorry, smth failed';
     }
 }
