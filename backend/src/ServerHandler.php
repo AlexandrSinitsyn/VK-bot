@@ -3,9 +3,7 @@
 namespace Bot;
 
 use Bot\Cache\CacheAdapter;
-use Bot\Commands\CommandsStorage;
-use Bot\Exceptions\ValidationException;
-use Throwable;
+use Bot\Commands\CommandAdapter;
 use VK\CallbackApi\Server\VKCallbackApiServerHandler;
 use VK\Client\VKApiClient;
 
@@ -13,13 +11,13 @@ const VK_API = new VKApiClient('5.130');
 
 class ServerHandler extends VKCallbackApiServerHandler
 {
-    private CommandsStorage $storage;
+    private CommandAdapter $commandAdapter;
     private CacheAdapter $cacheAdapter;
 
     public function __construct()
     {
         $this->cacheAdapter = new CacheAdapter();
-        $this->storage = new CommandsStorage($this->cacheAdapter);
+        $this->commandAdapter = new CommandAdapter($this->cacheAdapter);
     }
 
     public static function sendMessage(int $user_id, string $message)
@@ -52,20 +50,9 @@ class ServerHandler extends VKCallbackApiServerHandler
         $args = preg_split('/\s+/', $text);
         $user_id = $message->from_id;
 
-        $command = $this->storage->getCommand(array_shift($args));
-        if ($command != null) {
-            try {
-                $command->execute($user_id, $args);
-            } catch (ValidationException $e) {
-                self::sendMessage($user_id, 'Validation failed: ' . $e->getMessage());
-            } catch (Throwable $e) {
-                error_log(var_export(get_class($e) . ' : ' . $e->getMessage() . PHP_EOL . $e->getFile() . ' ' . $e->getLine(), true));
+        $response = $this->commandAdapter->executeCommand(array_shift($args), $user_id, $args);
 
-                self::sendMessage($user_id, var_export($e, true));
-            }
-        } else {
-            self::sendMessage($user_id, 'Command not found!');
-        }
+        self::sendMessage($user_id, $response);
 
         echo 'ok';
     }

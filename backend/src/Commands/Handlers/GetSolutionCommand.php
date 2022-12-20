@@ -19,7 +19,7 @@ class GetSolutionCommand extends AbstractCommand
             'Usage regex: `get-hw-solution\s+(\d+):\s+(\d+)\s*`';
     }
 
-    protected function response(User $user, array $args): ?string
+    protected function response(User $user, array $args): string
     {
         preg_match('/^(\d+):\s+(\d+)$/', trim(join(' ', $args)), $matches);
 
@@ -32,10 +32,5 @@ class GetSolutionCommand extends AbstractCommand
             ->commit()->asFailure()?->onThrow();
 
         return strval($this->homeworksSolutionService->getSolution($matches[1], $matches[2]));
-    }
-
-    protected function register(array $user, array $args): string
-    {
-        return 'You can not get homeworks til you are not registered';
     }
 }

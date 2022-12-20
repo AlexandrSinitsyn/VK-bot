@@ -5,11 +5,13 @@ namespace Bot\Commands;
 use Bot\Attributes\Controller;
 use Bot\Attributes\Validator;
 use Bot\Cache\CacheAdapter;
+use Bot\Exceptions\ValidationException;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use Throwable;
 
-class CommandsStorage
+class CommandAdapter
 {
     private array $commands;
 
@@ -94,8 +96,25 @@ class CommandsStorage
         }
     }
 
-    public function executeCommand(string $name, int $user_id, array $args = array()): void
+    public function executeCommand(string $name, int $user_id, array $args = array()): string
     {
-        $this->getCommand($name)->execute($user_id, $args);
+        $command = $this->getCommand($name);
+
+        $response = '';
+        if ($command != null) {
+            try {
+                $response = $command->execute($user_id, $args);
+            } catch (ValidationException $e) {
+                $response = 'Validation failed: ' . $e->getMessage();
+            } catch (Throwable $e) {
+                error_log(var_export(get_class($e) . ' : ' . $e->getMessage() . PHP_EOL . $e->getFile() . ' ' . $e->getLine(), true));
+
+                $response = var_export($e, true);
+            }
+        } else {
+            $response = 'Command not found!';
+        }
+
+        return $response;
     }
 }

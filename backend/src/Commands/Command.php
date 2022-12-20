@@ -9,7 +9,7 @@ interface Command
 {
     public function validate(string $methodName, mixed $value): ValidationResult;
 
-    public function getCommandStorage(): CommandsStorage;
+    public function getCommandStorage(): CommandAdapter;
 
     public function getName(): string;
 
@@ -18,5 +18,5 @@ interface Command
     /**
      * @throws ValidationException
      */
-    public function execute(int $user_id, array $args): void;
+    public function execute(int $user_id, array $args): string;
 }

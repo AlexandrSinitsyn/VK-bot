@@ -31,7 +31,7 @@ class HelpCommand extends AbstractCommand
         return $result;
     }
 
-    protected function response(User $user, array $args): ?string
+    protected function response(User $user, array $args): string
     {
         return self::helpString();
     }

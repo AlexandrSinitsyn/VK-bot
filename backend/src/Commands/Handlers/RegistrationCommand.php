@@ -18,7 +18,7 @@ class RegistrationCommand extends AbstractCommand
         return 'User registration.' . PHP_EOL . 'Usage example: `Register student.`.' . PHP_EOL . 'Usage regex: `Register\s+(([Ss]tudent[.!]?)?|[Tt]eacher[.!])\s*`';
     }
 
-    protected function response(User $user, array $args): ?string
+    protected function response(User $user, array $args): string
     {
         return 'You can not re-register';
     }

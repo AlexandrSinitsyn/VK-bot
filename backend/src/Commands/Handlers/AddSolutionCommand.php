@@ -4,8 +4,6 @@ namespace Bot\Commands\Handlers;
 
 use Bot\Attributes\Controller;
 use Bot\Entity\User;
-use DateTime;
-use Exception;
 
 #[Controller]
 class AddSolutionCommand extends AbstractCommand
@@ -21,7 +19,7 @@ class AddSolutionCommand extends AbstractCommand
             'Usage regex: `add-hw-solution\s+(\d+):\s*(.*)\s*`';
     }
 
-    protected function response(User $user, array $args): ?string
+    protected function response(User $user, array $args): string
     {
         preg_match('/^(\d+):\s*(.*)\s*$/', trim(join(' ', $args)), $matches);
 
@@ -36,10 +34,5 @@ class AddSolutionCommand extends AbstractCommand
         $result = $this->homeworksSolutionService->saveSolution($matches[1], $user->id, $matches[2]);
 
         return $result ? 'Ok' : 'Sorry, smth failed';
-    }
-
-    protected function register(array $user, array $args): string
-    {
-        return 'You can not add solutions til you are not a student';
     }
 }

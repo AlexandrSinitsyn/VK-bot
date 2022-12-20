@@ -19,7 +19,7 @@ class GetHomeworkCommand extends AbstractCommand
             'Usage regex: `get-hw\s+(\d+)\s*`';
     }
 
-    protected function response(User $user, array $args): ?string
+    protected function response(User $user, array $args): string
     {
         preg_match('/^(\d+)$/', trim(join(' ', $args)), $matches);
 
@@ -31,10 +31,5 @@ class GetHomeworkCommand extends AbstractCommand
         $result = $this->homeworkService->getHomeworkById($matches[1]);
 
         return $result ?? 'Homework not found';
-    }
-
-    protected function register(array $user, array $args): string
-    {
-        return 'You can not get homeworks til you are not registered';
     }
 }

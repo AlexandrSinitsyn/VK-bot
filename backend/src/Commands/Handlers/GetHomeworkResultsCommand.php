@@ -19,7 +19,7 @@ class GetHomeworkResultsCommand extends AbstractCommand
             'Usage regex: `get-hw-results\s+(\d+)\s*`';
     }
 
-    protected function response(User $user, array $args): ?string
+    protected function response(User $user, array $args): string
     {
         preg_match('/^(\d+)$/', trim(join(' ', $args)), $matches);
 
@@ -30,10 +30,5 @@ class GetHomeworkResultsCommand extends AbstractCommand
             ->commit()->asFailure()?->onThrow();
 
         return join(' ', $this->homeworkService->getHomeworkById($matches[1])->results);
-    }
-
-    protected function register(array $user, array $args): string
-    {
-        return 'You can not get homeworks\' results til you are not registered';
     }
 }

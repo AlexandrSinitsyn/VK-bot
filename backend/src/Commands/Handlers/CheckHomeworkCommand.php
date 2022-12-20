@@ -4,8 +4,6 @@ namespace Bot\Commands\Handlers;
 
 use Bot\Attributes\Controller;
 use Bot\Entity\User;
-use DateTime;
-use Exception;
 
 #[Controller]
 class CheckHomeworkCommand extends AbstractCommand
@@ -21,7 +19,7 @@ class CheckHomeworkCommand extends AbstractCommand
             'Usage regex: `check-hw\s+(\d+):\s*(\d+)\s+->\s+(\d+)\s*`';
     }
 
-    protected function response(User $user, array $args): ?string
+    protected function response(User $user, array $args): string
     {
         preg_match('/^(\d+):\s*(\d+)\s+->\s+(\d+)$/', trim(join(' ', $args)), $matches);
 
@@ -36,10 +34,5 @@ class CheckHomeworkCommand extends AbstractCommand
         $result = $this->homeworkService->checkHomework($matches[1], $matches[2], $matches[3]);
 
         return $result ? 'Ok' : 'Sorry, smth failed';
-    }
-
-    protected function register(array $user, array $args): string
-    {
-        return 'You can not add homework\'s results til you are not a teacher';
     }
 }

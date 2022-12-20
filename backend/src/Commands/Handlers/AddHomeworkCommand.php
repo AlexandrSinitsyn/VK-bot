@@ -23,7 +23,7 @@ class AddHomeworkCommand extends AbstractCommand
             'Usage regex: `add-hw\s+(\d+):\s*[0-9]{2}-[0-9]{2}-[0-9]{4}\s*`';
     }
 
-    protected function response(User $user, array $args): ?string
+    protected function response(User $user, array $args): string
     {
         preg_match('/^(\d+):\s*([0-9]{2}-[0-9]{2}-[0-9]{4})$/', trim(join(' ', $args)), $matches);
 
@@ -41,10 +41,5 @@ class AddHomeworkCommand extends AbstractCommand
         } catch (Exception $e) {
             return "Failed: $e";
         }
-    }
-
-    protected function register(array $user, array $args): string
-    {
-        return 'You can not add homeworks til you are not a teacher';
     }
 }
