@@ -8,7 +8,7 @@ It is an educational project, that will show my skills in these type of programm
 ---
 
 Bot that will simplify studying process by simplifying teacher-student interconnection.
-Now, it will become just one-click to get your homework results as long as on click for uploading it.
+Now, it will become just one-click to get your homework results as long as one click for uploading it.
 
 ### Functionality
 
@@ -35,6 +35,13 @@ List of functions that bot provides for:
 
 ---
 
+## Stack
+- php8.1
+- NGINX
+- Postgres
+- Docker
+- Grafana
+
 ### Request and response diagrams:
 
 #### request
@@ -53,5 +60,11 @@ List of functions that bot provides for:
 | ![teacher](.github/static/test_teacher.png) | ![student](.github/static/test_student.png) |
 
 ---
+
+### Datatable
+![datatable](.github/static/datatable.png)
+
+---
+
 **now it is impossible to have one instance of bot for several courses/classes.
 So, for each class you should have independent bot. It is not very comfortable, so it is going to be modified*
