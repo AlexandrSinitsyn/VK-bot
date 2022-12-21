@@ -47,6 +47,14 @@ services:
         volumes:
             - ./database/:/vk-bot/
 
+    grafana:
+        image: grafana/grafana-enterprise:8.2.0
+        ports:
+            - "3001:3000"
+        user: '104'
+        volumes:
+            - ./logs/grafana/:/var/share/grafana
+
 networks:
     internal:
         driver: bridge

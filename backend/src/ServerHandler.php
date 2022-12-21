@@ -40,7 +40,7 @@ class ServerHandler extends VKCallbackApiServerHandler
 
     function confirmation(int $group_id, ?string $secret)
     {
-        if ($secret === GROUP_SECRET && $group_id === GROUP_ID) {
+        if ($secret == GROUP_SECRET && $group_id == GROUP_ID) {
             echo API_CONFIRMATION_TOKEN;
         }
     }
