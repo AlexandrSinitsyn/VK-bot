@@ -18,6 +18,7 @@ List of functions that bot provides for:
   - set new homework
   - reset deadline
   - save result
+  - reply to student in message
 - Student:
   - upload solution
   - check if work is checked
@@ -31,6 +32,18 @@ List of functions that bot provides for:
 - add possibility to contain several courses in one session bot-student*
 - add some timetable
 - etc.
+
+---
+
+### Request and response diagrams:
+
+#### request
+
+![request](.github/static/request_diagram.png)
+
+#### response
+
+![response](.github/static/response_diagram.png)
 
 ---
 **now it is impossible to have one instance of bot for several courses/classes.

@@ -32,6 +32,6 @@ class GetSolutionCommand extends AbstractCommand
             ->pipe(fn() => $this->validate('notChecked', array('hwid' => (int) $matches[2], 'uid' => (int) $matches[4])))
             ->commit()->asFailure()?->onThrow();
 
-        return strval($this->homeworksSolutionService->getSolution($matches[1], $matches[2]));
+        return strval($this->homeworksSolutionService->getSolution($matches[2], $matches[4]));
     }
 }

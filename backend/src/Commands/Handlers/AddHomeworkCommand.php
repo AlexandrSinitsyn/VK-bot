@@ -33,7 +33,7 @@ class AddHomeworkCommand extends AbstractCommand
             ->commit()->asFailure()?->onThrow();
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $result = $this->homeworkService->saveHomework($matches[1], array(), new DateTime($matches[2]));
+        $result = $this->homeworkService->saveHomework($matches[2], array(), new DateTime($matches[4]));
 
         return $result ? 'Ok' : 'Sorry, smth failed';
     }
