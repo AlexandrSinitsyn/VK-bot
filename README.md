@@ -46,5 +46,12 @@ List of functions that bot provides for:
 ![response](.github/static/response_diagram.png)
 
 ---
+
+### Usage example
+|                   Teacher                   |                   Student                   |
+|:-------------------------------------------:|:-------------------------------------------:|
+| ![teacher](.github/static/test_teacher.png) | ![student](.github/static/test_student.png) |
+
+---
 **now it is impossible to have one instance of bot for several courses/classes.
 So, for each class you should have independent bot. It is not very comfortable, so it is going to be modified*
