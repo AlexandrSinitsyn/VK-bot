@@ -60,13 +60,19 @@ abstract class AbstractCommand implements Command
         return 'You are not registered';
     }
 
+    /**
+     * @throws ValidationException
+     */
+    protected function run(array|User $user, array $args): string
+    {
+        return $user instanceof User ? $this->response($user, $args) : $this->register($user, $args);
+    }
+
     public function execute(int $user_id, array $args): string
     {
         $user = ServerHandler::getUsers([$user_id])[0];
         $found = $this->userService->getUserById($user_id);
 
-        $message = $found === null ? $this->register($user, $args) : ($this->response($found, $args) ?? $this->register($user, $args));
-
-        return $message ?? 'Message was `null`';
+        return $this->run($found ?? $user, $args);
     }
 }

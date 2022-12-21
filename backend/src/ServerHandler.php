@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace Bot;
 
@@ -13,6 +13,8 @@ class ServerHandler extends VKCallbackApiServerHandler
 {
     private CommandAdapter $commandAdapter;
     private CacheAdapter $cacheAdapter;
+    private static int $senderId;
+    private static int $messageId;
 
     public function __construct()
     {
@@ -24,8 +26,8 @@ class ServerHandler extends VKCallbackApiServerHandler
     {
         VK_API->messages()->send(BOT_TOKEN, [
             'user_id' => $user_id,
-            'random_id' => random_int(0, PHP_INT_MAX),
-            'message' => $message
+            'random_id' => self::$messageId, // random_int(0, PHP_INT_MAX),
+            'message' => $message,
         ]);
     }
 
@@ -45,10 +47,17 @@ class ServerHandler extends VKCallbackApiServerHandler
 
     public function messageNew(int $group_id, ?string $secret, array $object)
     {
+        if ($secret != GROUP_SECRET) {
+            echo 'nok';
+            return;
+        }
+
         $message = $object['message'];
         $text = $message->text;
         $args = preg_split('/\s+/', $text);
         $user_id = $message->from_id;
+        self::$senderId = $user_id;
+        self::$messageId = $message->id;
 
         $response = $this->commandAdapter->executeCommand(array_shift($args), $user_id, $args);
 
